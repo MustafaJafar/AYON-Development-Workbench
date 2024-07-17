@@ -1,0 +1,351 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+
+        // Documentation commands
+        {
+            "label": "Initialize Docs",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "cd",
+                "${cwd}/ayon-documentation/website",
+                "&&",
+                "npm",
+                "install",
+                "-g",
+                "yarn",
+                "&&",
+                "yarn",
+                "add",
+                "docusaurus",
+                "--dev"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Docs",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/run-docs.bat",
+            "args": [
+                "${cwd}/ayon-documentation",
+            ],
+            "problemMatcher": []
+        },
+
+        // Initialize addon clones
+        // These commands only work with Ynput official addons.
+        {
+            "label": "Initialize all addon clones",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/initialize-all-clone.bat",
+            "args": [
+                "${cwd}",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Initialize addon clone",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/initialize-clone.bat",
+            "args": [
+                "${cwd}",
+                "${input:repo_name}"
+            ],
+            "problemMatcher": []
+        },
+
+        // AYON Launcher commands
+        {
+            "label": "Update Launcher env",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "pwsh",  // This command represents my powershell, Brought from here https://github.com/PowerShell/PowerShell/releases
+                "${cwd}/ayon-launcher/tools/manage.ps1",
+                "create-env",
+                "&&",
+                "pwsh",
+                "${cwd}/ayon-launcher/tools/manage.ps1",
+                "install-runtime-dependencies",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Live Launcher Production",
+            "type": "shell",
+            "command": "${cwd}/ayon-launcher/tools/ayon_console.bat",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Live Launcher Staging",
+            "type": "shell",
+            "command": "${cwd}/ayon-launcher/tools/ayon_console.bat",
+            "args": [
+                "--use-staging",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Live Launcher Dev",
+            "type": "shell",
+            "command": "${cwd}/ayon-launcher/tools/ayon_console.bat",
+            "args": [
+                "--use-dev",
+            ],
+            "problemMatcher": []
+        },
+        
+        // Create dependency package
+        {
+            "label": "Install dependencies tool",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "copy",
+                "${cwd}\\.vscode\\scripts\\.env",
+                "${cwd}\\ayon-dependencies-tool\\.env",
+                "&&",
+                "pwsh",
+                "${cwd}/ayon-dependencies-tool/start.ps1",
+                "install"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Create dependency package",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "pwsh",
+                "${cwd}/ayon-dependencies-tool/start.ps1",
+                "create",
+                "-b",
+                "${input:bundle_name}"
+            ],
+            "problemMatcher": []
+        },
+
+        // Addon Commands
+        {
+            "label": "Update ayon-core env",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "pwsh",
+                "${cwd}/ayon-core/tools/manage.ps1",
+                "create-env",
+            ],
+            "problemMatcher": []
+        },
+
+        // Create and upload addon zip files
+        {
+            "label": "Create and upload all addons",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/create-all-addons.bat",
+            "args": [
+                "${cwd}",
+                "${cwd}\\packages",  // This one is backslash to match the slash direction in ${cwd}
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Create and upload an addon",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/create-addon.bat",
+            "args": [
+                "${cwd}",
+                "${input:repo_name}",
+            ],
+            "problemMatcher": []
+        },
+
+        // Update develop or main branch
+        {
+            "label": "Update develop/main in all addons",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "update ayon-applications",
+                "update ayon-blender",
+                "update ayon-core",
+                "update ayon-deadline",
+                "update ayon-dependencies-tool",
+                "update ayon-documentation",
+                "update ayon-houdini",
+                "update ayon-launcher",
+                "update ayon-maya",
+                "update ayon-nuke",
+                "update ayon-ocio",
+                "update ayon-python-api",
+                "update ayon-third-party",
+                "update ayon-traypublisher",
+                "update example-studio-addon",
+            ]
+        },
+        {
+            "label": "update ayon-applications",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-applications",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-blender",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-blender",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-core",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-core",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-deadline",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-deadline",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-dependencies-tool",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-dependencies-tool",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-documentation",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-documentation",
+                "main",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-houdini",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-houdini",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-launcher",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-launcher",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-maya",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-maya",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-nuke",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-nuke",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-ocio",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-ocio",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-python-api",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-python-api",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-third-party",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-third-party",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-traypublisher",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-traypublisher",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update example-studio-addon",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/example-studio-addon",
+                "main",
+            ],
+            "problemMatcher": []
+        },
+    ],
+    "inputs": [
+        {
+            "id": "bundle_name",
+            "description": "",
+            "default": "AYON-Dev",
+            "type": "promptString"
+        },
+        {
+            "id": "repo_name",
+            "description": "",
+            "default": "ayon-core",
+            "type": "promptString"
+        }
+    ]
+}

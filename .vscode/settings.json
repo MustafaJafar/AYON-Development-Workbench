@@ -1,0 +1,23 @@
+{
+    "terminal.integrated.env.windows": {
+        "PYTHONPATH": "${cwd}/ayon-core/client;${env:PYTHONPATH}"
+    },
+    "python.analysis.extraPaths": [
+        // AYON client code.
+        "./ayon-applications/client",
+        "./ayon-blender/client",
+        "./ayon-core/client",
+        "./ayon-deadline/client",
+        "./ayon-houdini/client",
+        "./ayon-maya/client",
+        "./ayon-nuke/client",
+        "./ayon-ocio/client",
+        "./ayon-python-api",
+        "./ayon-third-party/client",
+        "./ayon-traypublisher/client",
+        "./example-studio-addon/client",
+        
+        // DCC specific code.
+        "C:/Program Files/Side Effects Software/Houdini 19.5.805/houdini/python3.9libs",
+    ],
+}
