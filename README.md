@@ -16,3 +16,4 @@ Here's a quick peek at what this repository offers, but you'll probably want to 
 - You can create and upload addon zip files using a simple command.
 - Commands are provided for initializing and running AYON documentation.
 - It also offers commands for updating your dependency packages by specifying input repo.
+- It also offers key settings to add the client code of multiple repositories as sources, enabling the Python extension to search for function definitions.
