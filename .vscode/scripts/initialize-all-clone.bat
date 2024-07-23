@@ -18,7 +18,8 @@ for %%i in (
     ayon-python-api,
     ayon-third-party,
     ayon-traypublisher,
-    example-studio-addon
+    example-studio-addon,
+    ayon-backend
 ) do (
     if exist %1/%%i (echo %1/%%i exists) else (git clone https://github.com/ynput/%%i.git)
 )

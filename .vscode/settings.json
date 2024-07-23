@@ -3,6 +3,9 @@
         "PYTHONPATH": "${cwd}/ayon-core/client;${env:PYTHONPATH}"
     },
     "python.analysis.extraPaths": [
+        // AYON Server Backend
+        "./ayon-backend",
+
         // AYON client code.
         "./ayon-applications/client",
         "./ayon-blender/client",

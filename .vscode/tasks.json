@@ -181,6 +181,7 @@
                 "update ayon-third-party",
                 "update ayon-traypublisher",
                 "update example-studio-addon",
+                "update ayon-backend",
             ]
         },
         {
@@ -329,6 +330,16 @@
             "command": "${cwd}/.vscode/scripts/update-branch.bat",
             "args": [
                 "${cwd}/example-studio-addon",
+                "main",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-backend",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-backend",
                 "main",
             ],
             "problemMatcher": []
