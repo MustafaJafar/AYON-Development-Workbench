@@ -1,6 +1,6 @@
 @echo off
-@REM %1 -> Current Directory
-@REM %2 -> Repo name
+@REM %1 -> Repo Directory
+@REM %2 -> Branch name
 
 
 cd /d %1
