@@ -344,6 +344,17 @@
             ],
             "problemMatcher": []
         },
+        {
+            // Typically, I use it with addons with services
+            "label": "Switch an addon to its most recent tag",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "${cwd}/.vscode/scripts/switch-to-most-recent-tag.ps1",
+                "${cwd}/${input:repo_name}",
+            ],
+            "problemMatcher": []
+        },
     ],
     "inputs": [
         {
