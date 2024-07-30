@@ -19,7 +19,10 @@ for %%i in (
     ayon-third-party,
     ayon-traypublisher,
     example-studio-addon,
-    ayon-backend
+    ayon-backend,
+    ayon-kitsu,
+    ayon-ftrack,
+    ayon-shotgrid
 ) do (
     if exist %1/%%i (echo %1/%%i exists) else (git clone https://github.com/ynput/%%i.git)
 )

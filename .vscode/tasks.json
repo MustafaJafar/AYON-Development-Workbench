@@ -344,6 +344,36 @@
             "problemMatcher": []
         },
         {
+            "label": "update ayon-kitsu",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-kitsu",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-ftrack",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-ftrack",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update ayon-shotgrid",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/update-branch.bat",
+            "args": [
+                "${cwd}/ayon-shotgrid",
+                "develop",
+            ],
+            "problemMatcher": []
+        },
+        {
             // Typically, I use it with addons with services
             "label": "Switch an addon to its most recent tag",
             "type": "shell",
@@ -351,6 +381,128 @@
             "args": [
                 "${cwd}/.vscode/scripts/switch-to-most-recent-tag.ps1",
                 "${cwd}/${input:repo_name}",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Install Shotgrid Services",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "copy",
+                "${cwd}\\.vscode\\scripts\\.env",
+                "${cwd}\\ayon-shotgrid\\service_tools\\.env",
+                "&&",
+                "pwsh",
+                "${cwd}/ayon-shotgrid/service_tools/manage.ps1",
+                "create-env",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Shotgrid Services",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "${cwd}/ayon-shotgrid/service_tools/manage.ps1",
+                "services",
+                "--variant",
+                "${input:bundle_name}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Shotgrid Leecher Service",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "${cwd}/ayon-shotgrid/service_tools/manage.ps1",
+                "leecher",
+                "--variant",
+                "${input:bundle_name}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Shotgrid Processor Service",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "${cwd}/ayon-shotgrid/service_tools/manage.ps1",
+                "processor",
+                "--variant",
+                "${input:bundle_name}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Install ftrack Services",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "copy",
+                "${cwd}\\.vscode\\scripts\\.env",
+                "${cwd}\\ayon-ftrack\\service_tools\\.env",
+                "&&",
+                "pwsh",
+                "${cwd}/ayon-ftrack/service_tools/manage.ps1",
+                "install",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Run ftrack Services",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "${cwd}/ayon-ftrack/service_tools/manage.ps1",
+                "services",
+                "--variant",
+                "${input:bundle_name}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Run ftrack Leecher Service",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "${cwd}/ayon-ftrack/service_tools/manage.ps1",
+                "leecher",
+                "--variant",
+                "${input:bundle_name}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Run ftrack Processor Service",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "${cwd}/ayon-ftrack/service_tools/manage.ps1",
+                "processor",
+                "--variant",
+                "${input:bundle_name}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Install Kitsu Processor Service",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "${cwd}/.vscode/scripts/install-kitsu-processor.ps1",
+                "${cwd}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Kitsu Processor Service",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "${cwd}/.vscode/scripts/run-kitsu-processor.ps1",
+                "${cwd}"
             ],
             "problemMatcher": []
         },

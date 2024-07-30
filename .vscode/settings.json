@@ -19,6 +19,10 @@
         "./ayon-third-party/client",
         "./ayon-traypublisher/client",
         "./example-studio-addon/client",
+
+        "./ayon-kitsu/client",
+        "./ayon-ftrack/client",
+        "./ayon-shotgrid/client",
         
         // DCC specific code.
         "C:/Program Files/Side Effects Software/Houdini 19.5.805/houdini/python3.9libs",
