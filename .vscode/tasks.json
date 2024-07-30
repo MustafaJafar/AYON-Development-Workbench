@@ -115,9 +115,8 @@
         {
             "label": "Create dependency package",
             "type": "shell",
-            "command": "",
+            "command": "pwsh",
             "args": [
-                "pwsh",
                 "${cwd}/ayon-dependencies-tool/start.ps1",
                 "create",
                 "-b",
