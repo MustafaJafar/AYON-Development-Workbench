@@ -1,7 +1,7 @@
 # Very basic pyenv setup
 # I chose to install it in C drive as spaces in user names caused issues when using poetry.
 # More info: https://community.ynput.io/t/poetry-installation-failed/1522
-# For advanced pyenv installation script: https://github.com/pyenv-win/pyenv-win/blob/master/docs/installation.md#powershell
+# For advanced pyenv setup script: https://github.com/pyenv-win/pyenv-win/blob/master/docs/installation.md#powershell
 
 $installation_path = "C:\.pyenv"
 Write-Host "Cloning Pyenv to $installation_path"
@@ -22,3 +22,18 @@ Write-Host "Appending '$installation_path\pyenv-win\bin' and '$installation_path
 # [!WARNING]
 # VSCode overrides pyenv execuatbles making pyenv global or local (.python-version file) useless when using VScode terminal.
 # More info, https://github.com/microsoft/vscode-python/issues/20881
+
+# Retrieve PATH
+[System.Environment]::GetEnvironmentVariable('Path',[System.EnvironmentVariableTarget]::User);
+
+# Install Python Version
+pyenv install 3.11.5
+pyenv global 3.11.5
+
+# Install poetry
+pip install poetry
+
+# Set poetry config
+poetry config virtualenvs.in-project true
+poetry config virtualenvs.create true
+poetry config virtualenvs.path "{project-dir}\\.venv"
