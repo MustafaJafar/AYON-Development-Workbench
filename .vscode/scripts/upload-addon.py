@@ -127,7 +127,7 @@ if __name__ == "__main__":
     ayon_api.init_service()
     log.info("Trying to upload zips")
 
-    trigger_restart = False
+    trigger_restart = True
 
     for path in addons:
 
