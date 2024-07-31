@@ -17,3 +17,21 @@ Here's a quick peek at what this repository offers, but you'll probably want to 
 - Commands are provided for initializing and running AYON documentation.
 - It also offers commands for updating your dependency packages by specifying input repo.
 - It also offers key settings to add the client code of multiple repositories as sources, enabling the Python extension to search for function definitions.
+
+> [!NOTE]  
+> [upload-addon.py](.vscode/scripts/upload-addon.py) expects some dev initialization,
+> you can use my [setup-my-dev-env.ps1](.vscode/scripts/setup-my-dev-env.ps1) via
+> ```
+> ./.vscode/scripts/setup-my-dev-env.ps1
+> ```
+> or manually via
+> ```
+>pip install poetry
+>cd .vscode\scripts\.venv
+>poetry install --no-root 
+> ```
+> or you can even remove poetry commands and use plain python commands in my bat files [create-addon.bat](.vscode/scripts/create-addon.bat) and [create-all-addons.bat](.vscode/scripts/create-all-addons.bat). however, you need to install the dependencies manually via
+> ```
+> pip install python-dotenv
+> pip install ayon-python-api
+> ```
