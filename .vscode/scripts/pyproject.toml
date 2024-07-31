@@ -1,0 +1,10 @@
+[tool.poetry]
+name = "upload-addon"
+version = "0.0.1"
+description = "dependencies for upload-addon.py"
+authors = ["Mustafa Jafar <https://github.com/MustafaJafar>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+python-dotenv = ">= 1.0.0"
+ayon-python-api = ">= 1.0.0"
