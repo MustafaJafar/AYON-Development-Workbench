@@ -19,16 +19,22 @@ Write-Host "Appending '$installation_path\pyenv-win\bin' and '$installation_path
 # [!NOTE]
 # It's recommended to remove any python installations on the machine.
 #
-# [!WARNING]
+# [!TIP]
+# VSCode Terminal
 # VSCode overrides pyenv execuatbles making pyenv global or local (.python-version file) useless when using VScode terminal.
 # More info, https://github.com/microsoft/vscode-python/issues/20881
+# VSCode Tasks
+# It works as expected. VsCode doesn't inject any environments there.
+# So, using .python-version works and you only need to cd the directoty containing it.
 
 # Retrieve PATH
 [System.Environment]::GetEnvironmentVariable('Path',[System.EnvironmentVariableTarget]::User);
 
 # Install Python Version
+pyenv install 3.9.13
 pyenv install 3.11.5
-pyenv global 3.11.5
+
+pyenv global 3.9.13
 
 # Install poetry
 pip install poetry
@@ -37,3 +43,7 @@ pip install poetry
 poetry config virtualenvs.in-project true
 poetry config virtualenvs.create true
 poetry config virtualenvs.path "{project-dir}\\.venv"
+
+# Install dependencies of upload-addon
+Set-Location $PSScriptRoot
+poetry install --no-root 

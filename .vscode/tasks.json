@@ -506,6 +506,15 @@
             ],
             "problemMatcher": []
         },
+        {
+            "label": "Check Python version in a relative path",
+            "type": "shell",
+            "command": "${cwd}/.vscode/scripts/check-python-version.bat",
+            "args": [
+                "${cwd}/${input:some_path}"
+            ],
+            "problemMatcher": []
+        },
     ],
     "inputs": [
         {
