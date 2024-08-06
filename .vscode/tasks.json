@@ -72,6 +72,15 @@
             "problemMatcher": []
         },
         {
+            "label": "Launch publish report viewer",
+            "type": "shell",
+            "command": "${cwd}/ayon-launcher/tools/ayon_console.bat",
+            "args": [
+                "publish-report-viewer",
+            ],
+            "problemMatcher": []
+        },
+        {
             "label": "Run Live Launcher Production",
             "type": "shell",
             "command": "${cwd}/ayon-launcher/tools/ayon_console.bat",
