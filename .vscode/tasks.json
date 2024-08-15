@@ -61,12 +61,15 @@
             "type": "shell",
             "command": "",
             "args": [
+                "cd",
+                "${cwd}/ayon-launcher",
+                "&&",
                 "pwsh",  // This command represents my powershell, Brought from here https://github.com/PowerShell/PowerShell/releases
-                "${cwd}/ayon-launcher/tools/manage.ps1",
+                "tools/manage.ps1",
                 "create-env",
                 "&&",
                 "pwsh",
-                "${cwd}/ayon-launcher/tools/manage.ps1",
+                "tools/manage.ps1",
                 "install-runtime-dependencies",
             ],
             "problemMatcher": []
