@@ -75,6 +75,16 @@
             "problemMatcher": []
         },
         {
+            "label": "Build and Upload the launcher",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "${cwd}/.vscode/scripts/build_and_upload_launcher.ps1",
+                "${cwd}"
+            ],
+            "problemMatcher": []
+        },
+        {
             "label": "Launch publish report viewer",
             "type": "shell",
             "command": "${cwd}/ayon-launcher/tools/ayon_console.bat",
