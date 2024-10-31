@@ -1,7 +1,100 @@
 {
     "version": "2.0.0",
     "tasks": [
-
+        // AYON Server & Docker commands
+        // Note, I run the following docker commands on my Linux VM only.
+        {
+            "label": "Prune Docker",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "sudo",
+                "docker",
+                "image",
+                "prune",
+                "-a"
+            ],
+            "problemMatcher": []
+        },
+        {
+            // I'm using a local kitsu server for testing.
+            // Get it here https://github.com/EmberLightVFX/Kitsu-for-Docker
+            "label": "Update Kitsu Server",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "cd",
+                "${cwd}/Kitsu-for-Docker",
+                "&&",
+                "sudo",
+                "docker",
+                "compose",
+                "pull",
+                "&&",
+                "sudo",
+                "docker",
+                "compose",
+                "up",
+                "-d",
+                "--build"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Update AYON Server",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "cd",
+                "${cwd}/ayon-docker",
+                "&&",
+                "docker",
+                "compose",
+                "pull",
+                "&&",
+                "docker",
+                "compose",
+                "up",
+                "-d",
+                "--build"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Show AYON Server Log",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "cd",
+                "${cwd}/ayon-docker",
+                "&&",
+                "docker",
+                "compose",
+                "logs",
+                "-t",
+                "-n",
+                "1000",
+                "server"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Show AYON Server Release Info",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "cd",
+                "${cwd}/ayon-docker",
+                "&&",
+                "docker",
+                "compose",
+                "exec",
+                "server",
+                "cat",
+                "RELEASE",
+            ],
+            "problemMatcher": []
+        },
         // Documentation commands
         {
             "label": "Initialize Docs",
