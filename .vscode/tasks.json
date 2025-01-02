@@ -125,6 +125,14 @@
             ],
             "problemMatcher": []
         },
+        // Make docs online temporary via ngork
+        {
+            "label": "Make Docs Online",
+            "type": "shell",
+            "command": "ngrok http 3000",
+            "args": [],
+            "problemMatcher": []
+        },
 
         // Initialize addon clones
         // These commands only work with Ynput official addons.
