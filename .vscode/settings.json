@@ -18,13 +18,21 @@
         "./ayon-python-api",
         "./ayon-third-party/client",
         "./ayon-traypublisher/client",
-        "./example-studio-addon/client",
-
-        "./ayon-kitsu/client",
-        "./ayon-ftrack/client",
         "./ayon-shotgrid/client",
+        "./ayon-unreal/client",
+        "./ayon-jira/client",
+        "./ayon-version-control/client",
+        "./example-studio-addon/client",
+        "./ayon-ayon-aquarium/client",
+
+        "./ayon-launcher/common",
         
         // DCC specific code.
-        "C:/Program Files/Side Effects Software/Houdini 19.5.805/houdini/python3.9libs",
+        // "C:/Program Files/Side Effects Software/Houdini 19.5.805/houdini/python3.9libs",
+        "C:/Program Files/Side Effects Software/Houdini 20.5.370/houdini/python3.11libs",
+
+        // Dependecy package, expand the the env var to the full path if the following env var didn't work.
+        "${env:LOCALAPPDATA}/Ynput/AYON/dependency_packages/ayon_2411052009_windows.zip/runtime",
+        "${env:LOCALAPPDATA}/Ynput/AYON/dependency_packages/ayon_2411052009_windows.zip/dependencies",
     ],
 }
