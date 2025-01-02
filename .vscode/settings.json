@@ -31,7 +31,8 @@
         // "C:/Program Files/Side Effects Software/Houdini 19.5.805/houdini/python3.9libs",
         "C:/Program Files/Side Effects Software/Houdini 20.5.370/houdini/python3.11libs",
 
-        // Dependecy package, expand the the env var to the full path if the following env var didn't work.
+        // Dependecy package. Expand the the env var to the full path if the following env var didn't work.
+        //                    Also, don't forget to replace the path with your actual dependency package.
         "${env:LOCALAPPDATA}/Ynput/AYON/dependency_packages/ayon_2411052009_windows.zip/runtime",
         "${env:LOCALAPPDATA}/Ynput/AYON/dependency_packages/ayon_2411052009_windows.zip/dependencies",
     ],
