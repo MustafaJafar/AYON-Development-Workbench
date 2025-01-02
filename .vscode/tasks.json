@@ -187,6 +187,18 @@
             "problemMatcher": []
         },
         {
+            "label": "Launch Tray Publisher in Dev",
+            "type": "shell",
+            "command": "${cwd}/ayon-launcher/tools/ayon_console.bat",
+            "args": [
+                "--use-dev",
+                "addon",
+                "traypublisher",
+                "launch",
+            ],
+            "problemMatcher": []
+        },
+        {
             "label": "Run Live Launcher Production",
             "type": "shell",
             "command": "${cwd}/ayon-launcher/tools/ayon_console.bat",
