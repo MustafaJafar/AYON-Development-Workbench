@@ -1,6 +1,20 @@
 {
     "version": "2.0.0",
     "tasks": [
+        // Launch Jupyter
+        {
+            "label": "Launch Jupyter",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "cd",
+                "${cwd}/temp",
+                "&&",
+                "jupyter",
+                "notebook"
+            ],
+            "problemMatcher": []
+        },
         // AYON Server & Docker commands
         // Note, I run the following docker commands on my Linux VM only.
         {

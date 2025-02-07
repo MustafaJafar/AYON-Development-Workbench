@@ -36,6 +36,9 @@ pyenv install 3.11.5
 
 pyenv global 3.9.13
 
+# Instal Jupyter
+pip install jupyter
+
 # Install poetry
 pip install poetry
 
