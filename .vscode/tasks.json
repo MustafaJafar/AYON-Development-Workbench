@@ -109,6 +109,35 @@
             ],
             "problemMatcher": []
         },
+        {
+            "label": "Backup a Project",
+            "type": "shell",
+            "command": "cd",
+            "args": [
+                "${cwd}/ayon-docker",
+                "&&",
+                "sudo",
+                "make",
+                "dump",
+                "projectname=${input:project_name}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Import a Project",
+            "type": "shell",
+            "command": "cd",
+            "args": [
+                "${cwd}/ayon-docker",
+                "&&",
+                "sudo",
+                "make",
+                "restore",
+                "projectname=${input:project_name}",
+                "dump.${input:project_name}.sql"
+            ],
+            "problemMatcher": []
+        },
         // Documentation commands
         {
             "label": "Initialize Docs",
@@ -677,6 +706,12 @@
             "description": "",
             "default": "ayon-core",
             "type": "promptString"
-        }
+        },
+        {
+            "id": "project_name",
+            "description": "",
+            "default": "demo_Commercial",
+            "type": "promptString"
+        },
     ]
 }
