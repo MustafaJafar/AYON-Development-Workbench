@@ -1,6 +1,34 @@
 {
     "version": "2.0.0",
     "tasks": [
+        // Linting: Ruff check and fix.
+        {
+            "label": "Ruff Check",
+            "type": "shell",
+            "command": "cd",
+            "args": [
+                "${cwd}/${input:repo_name}",
+                "&&",
+                "ruff",
+                "check",
+                "${input:file_name}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Ruff Fix",
+            "type": "shell",
+            "command": "cd",
+            "args": [
+                "${cwd}/${input:repo_name}",
+                "&&",
+                "ruff",
+                "check",
+                "--fix",
+                "${input:file_name}"
+            ],
+            "problemMatcher": []
+        },
         // Launch Jupyter
         {
             "label": "Launch Jupyter",
