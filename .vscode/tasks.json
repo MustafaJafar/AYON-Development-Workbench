@@ -591,6 +591,17 @@
             "problemMatcher": []
         },
         {
+            "label": "Switch an addon to a tag",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "${cwd}/.vscode/scripts/switch-to-a-tag.ps1",
+                "${cwd}/${input:repo_name}",
+                "${input:tag_num}",
+            ],
+            "problemMatcher": []
+        },
+        {
             "label": "Install Shotgrid Services",
             "type": "shell",
             "command": "",
@@ -739,6 +750,12 @@
             "id": "project_name",
             "description": "",
             "default": "demo_Commercial",
+            "type": "promptString"
+        },
+        {
+            "id": "tag_num",
+            "description": "",
+            "default": "",
             "type": "promptString"
         },
     ]
