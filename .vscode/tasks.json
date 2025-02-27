@@ -261,6 +261,7 @@
             "type": "shell",
             "command": "${cwd}/ayon-launcher/tools/ayon_console.bat",
             "args": [
+                "--use-dev",
                 "publish-report-viewer",
             ],
             "problemMatcher": []
