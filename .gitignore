@@ -4,3 +4,9 @@ ayon*/
 
 tmp/*
 !tmp/.gitkeep
+
+extras/*
+!extras/.gitkeep
+
+tests/*
+!tests/.gitkeep

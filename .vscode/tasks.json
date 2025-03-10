@@ -775,7 +775,7 @@
         {
             "id": "docker_repo",
             "description": "",
-            "default": "ayon-docker",
+            "default": "ayon-enterprise-docker-stack",
             "type": "promptString"
         },
     ]
