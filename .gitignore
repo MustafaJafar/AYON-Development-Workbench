@@ -1,3 +1,6 @@
 __pycache__
 poetry.lock
 ayon*/
+
+tmp/*
+!tmp/.gitkeep
