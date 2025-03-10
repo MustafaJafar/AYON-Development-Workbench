@@ -50,11 +50,25 @@
             "type": "shell",
             "command": "",
             "args": [
-                "sudo",
                 "docker",
                 "image",
                 "prune",
                 "-a"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Rebuild Docker",
+            "type": "shell",
+            "command": "cd",
+            "args": [
+                "${cwd}/${input:docker_repo}",
+                "&&",
+                "docker",
+                "compose",
+                "up",
+                "-d",
+                "--build",
             ],
             "problemMatcher": []
         },
@@ -68,12 +82,10 @@
                 "cd",
                 "${cwd}/Kitsu-for-Docker",
                 "&&",
-                "sudo",
                 "docker",
                 "compose",
                 "pull",
                 "&&",
-                "sudo",
                 "docker",
                 "compose",
                 "up",
@@ -105,10 +117,9 @@
         {
             "label": "Show AYON Server Log",
             "type": "shell",
-            "command": "",
+            "command": "cd",
             "args": [
-                "cd",
-                "${cwd}/ayon-docker",
+                "${cwd}/${input:docker_repo}",
                 "&&",
                 "docker",
                 "compose",
@@ -116,17 +127,19 @@
                 "-t",
                 "-n",
                 "1000",
-                "server"
+                "server",
+                ">",
+                "../tmp/${input:docker_repo}.log",
+                "2>&1",
             ],
             "problemMatcher": []
         },
         {
             "label": "Show AYON Server Release Info",
             "type": "shell",
-            "command": "",
+            "command": "cd",
             "args": [
-                "cd",
-                "${cwd}/ayon-docker",
+                "${cwd}/${input:docker_repo}",
                 "&&",
                 "docker",
                 "compose",
@@ -142,7 +155,7 @@
             "type": "shell",
             "command": "cd",
             "args": [
-                "${cwd}/ayon-docker",
+                "${cwd}/${input:docker_repo}",
                 "&&",
                 "sudo",
                 "make",
@@ -156,7 +169,7 @@
             "type": "shell",
             "command": "cd",
             "args": [
-                "${cwd}/ayon-docker",
+                "${cwd}/${input:docker_repo}",
                 "&&",
                 "sudo",
                 "make",
@@ -757,6 +770,12 @@
             "id": "tag_num",
             "description": "",
             "default": "",
+            "type": "promptString"
+        },
+        {
+            "id": "docker_repo",
+            "description": "",
+            "default": "ayon-docker",
             "type": "promptString"
         },
     ]
