@@ -2,6 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         // Linting: Ruff check and fix.
+        // Skip entering a file name to apply the check and fix for all the files.
         {
             "label": "Ruff Check",
             "type": "shell",
@@ -776,6 +777,18 @@
             "id": "docker_repo",
             "description": "",
             "default": "ayon-docker",
+            "type": "promptString"
+        },
+        {
+            "id": "some_path",
+            "description": "",
+            "default": "E:/Ynput",
+            "type": "promptString"
+        },
+        {
+            "id": "file_name",
+            "description": "",
+            "default": "",
             "type": "promptString"
         },
     ]
