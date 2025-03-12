@@ -649,9 +649,8 @@
             "type": "shell",
             "command": "pwsh",
             "args": [
-                "${cwd}/ayon-shotgrid/service_tools/manage.ps1",
-                "services",
-                "--variant",
+                "${cwd}/.vscode/scripts/run-shotgrid-services.ps1",
+                "${cwd}",
                 "${input:bundle_name}"
             ],
             "problemMatcher": []
