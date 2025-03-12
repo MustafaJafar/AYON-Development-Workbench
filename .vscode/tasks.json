@@ -59,6 +59,19 @@
             "problemMatcher": []
         },
         {
+            "label": "Restart Docker",
+            "type": "shell",
+            "command": "cd",
+            "args": [
+                "${cwd}/${input:docker_repo}",
+                "&&",
+                "docker",
+                "compose",
+                "restart",
+            ],
+            "problemMatcher": []
+        },
+        {
             "label": "Rebuild Docker",
             "type": "shell",
             "command": "cd",
