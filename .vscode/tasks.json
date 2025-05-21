@@ -86,6 +86,25 @@
             ],
             "problemMatcher": []
         },
+        // I always have frontend repo cloned in this `server` directory.
+        // This command assumes you are already on the correct branch.
+        {
+            "label": "Run Live Frontend",
+            "type": "shell",
+            "command": "cd",
+            "args": [
+                "${cwd}/${input:docker_repo}/server/ayon-frontend",
+                "&&",
+                "yarn",
+                "install",
+                "&&",
+                "yarn",
+                "dev",
+                "--host",
+                "0.0.0.0"
+            ],
+            "problemMatcher": []
+        },
         {
             // I'm using a local kitsu server for testing.
             // Get it here https://github.com/EmberLightVFX/Kitsu-for-Docker
