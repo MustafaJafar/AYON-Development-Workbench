@@ -130,10 +130,9 @@
         {
             "label": "Update AYON Server",
             "type": "shell",
-            "command": "",
+            "command": "cd",
             "args": [
-                "cd",
-                "${cwd}/ayon-docker",
+                "${cwd}/${input:docker_repo}",
                 "&&",
                 "docker",
                 "compose",
