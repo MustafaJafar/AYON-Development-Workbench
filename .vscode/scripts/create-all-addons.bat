@@ -10,17 +10,17 @@ if exist %2 (
 
 @REM Create Addons - This is hardcoded.
 for %%i in (
+    ayon-third-party,
+    ayon-ocio,
     ayon-applications,
-    ayon-blender,
     ayon-core,
+    ayon-traypublisher,
+    ayon-blender,
     ayon-deadline,
     ayon-houdini,
     ayon-maya,
     ayon-nuke,
-    ayon-ocio,
-    ayon-third-party,
-    ayon-traypublisher,
-    example-studio-addon
+    ayon-usd,
 ) do (
     call python %1/%%i/create_package.py -o %2
 )

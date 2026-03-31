@@ -11,4 +11,4 @@ get-content $cwd\.vscode\scripts\.env | ForEach-Object {
 Set-Location $cwd/ayon-launcher
 
 tools/manage.ps1 --build-make-installer --force
-tools/manage.ps1 upload --server $env:AYON_SERVER_URL --api-key $env:AYON_API_KEY
+tools/manage.ps1 upload --server $env:AYON_SERVER_URL --api-key $env:AYON_API_KEY --force

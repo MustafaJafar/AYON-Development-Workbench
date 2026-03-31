@@ -5,35 +5,31 @@
     "python.analysis.extraPaths": [
         // AYON Server Backend
         "./ayon-backend",
+        "./ayon-python-api",
+        "./ayon-launcher/common",
 
         // AYON client code.
+        "./ayon-third-party/client",
+        "./ayon-ocio/client",
         "./ayon-applications/client",
-        "./ayon-blender/client",
         "./ayon-core/client",
+        "./ayon-traypublisher/client",
+        "./ayon-blender/client",
         "./ayon-deadline/client",
         "./ayon-houdini/client",
         "./ayon-maya/client",
         "./ayon-nuke/client",
-        "./ayon-ocio/client",
-        "./ayon-python-api",
-        "./ayon-third-party/client",
-        "./ayon-traypublisher/client",
-        "./ayon-shotgrid/client",
-        "./ayon-unreal/client",
-        "./ayon-jira/client",
-        "./ayon-version-control/client",
-        "./example-studio-addon/client",
-        "./ayon-ayon-aquarium/client",
-
-        "./ayon-launcher/common",
+        "./ayon-usd/client",
         
         // DCC specific code.
         // "C:/Program Files/Side Effects Software/Houdini 19.5.805/houdini/python3.9libs",
-        "C:/Program Files/Side Effects Software/Houdini 20.5.370/houdini/python3.11libs",
+        "C:/Program Files/Side Effects Software/Houdini 21.0.596/houdini/python3.11libs",
+        "C:/Program Files/Side Effects Software/Houdini 21.0.596/packages/apex/python3.11libs",
+        "C:/Program Files/Side Effects Software/Houdini 21.0.596/packages/kinefx/python3.11libs",
+        "H:/Program Files/Nuke16.0v6/plugins/nuke_internal",
 
-        // Dependecy package. Expand the the env var to the full path if the following env var didn't work.
-        //                    Also, don't forget to replace the path with your actual dependency package.
-        "${env:LOCALAPPDATA}/Ynput/AYON/dependency_packages/ayon_2411052009_windows.zip/runtime",
-        "${env:LOCALAPPDATA}/Ynput/AYON/dependency_packages/ayon_2411052009_windows.zip/dependencies",
+        // Dependecy package
+        "C:/Users/${env:USERNAME}/AppData/Local/Ynput/AYON/dependency_packages/ayon_2503122007_windows.zip/runtime",
+        "C:/Users/${env:USERNAME}/AppData/Local/Ynput/AYON/dependency_packages/ayon_2503122007_windows.zip/dependencies",
     ],
 }
