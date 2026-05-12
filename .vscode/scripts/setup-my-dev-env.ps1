@@ -53,3 +53,7 @@ poetry config virtualenvs.path "{project-dir}\\.venv"
 # Install dependencies of upload-addon
 Set-Location $PSScriptRoot
 poetry install --no-root 
+
+# Install uv
+## Download prebuilt binaries latest release, copy it to "C:\.uv", add it to PATH.
+## https://github.com/astral-sh/uv/releases
