@@ -30,17 +30,18 @@ Write-Host "Appending '$installation_path\pyenv-win\bin' and '$installation_path
 # Retrieve PATH
 [System.Environment]::GetEnvironmentVariable('Path',[System.EnvironmentVariableTarget]::User);
 
-# Install Python Version
-pyenv install 3.9.13
-pyenv install 3.11.5
+# Set execution policy
+Set-ExecutionPolicy RemoteSigned -Scope LocalMachine
 
-pyenv global 3.9.13
+# Install Python Version to match the py version in the current ayon launcher
+pyenv install 3.11.9
+pyenv global 3.11.9
 
 # Install Jupyter
 pip install jupyter
 
 # Install ruff
-pip intall ruff
+pip install ruff
 
 # Install poetry
 pip install poetry
