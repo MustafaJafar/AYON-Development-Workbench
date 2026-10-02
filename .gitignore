@@ -1,5 +1,7 @@
 __pycache__
-poetry.lock
+uv.lock
+.uv_cache
+.venv/
 ayon*/
 
 tmp/*
@@ -10,3 +12,8 @@ extras/*
 
 tests/*
 !tests/.gitkeep
+
+# Repos cloned by `mani sync` that don't match `ayon*/`
+ash/
+ops-repo-automation/
+pytest-ayon/

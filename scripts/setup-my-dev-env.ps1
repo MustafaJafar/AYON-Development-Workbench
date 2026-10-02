@@ -1,6 +1,5 @@
 # Very basic pyenv setup
-# I chose to install it in C drive as spaces in user names caused issues when using poetry.
-# More info: https://community.ynput.io/t/poetry-installation-failed/1522
+# I chose to install it in C drive as spaces in user names caused issues with python tooling.
 # For advanced pyenv setup script: https://github.com/pyenv-win/pyenv-win/blob/master/docs/installation.md#powershell
 
 $installation_path = "C:\.pyenv"
@@ -43,18 +42,20 @@ pip install jupyter
 # Install ruff
 pip install ruff
 
-# Install poetry
-pip install poetry
+# Install uv
+## Download prebuilt binaries latest release, copy it to "C:\.uv", add it to PATH.
+## https://github.com/astral-sh/uv/releases
 
-# Set poetry config
+# Install dependencies of upload-addon (creates scripts/.venv)
+Set-Location $PSScriptRoot
+uv sync
+
+# Install poetry, only needed for the ayon-kitsu processor service, its manage.ps1 still uses it.
+pip install poetry
 poetry config virtualenvs.in-project true
 poetry config virtualenvs.create true
 poetry config virtualenvs.path "{project-dir}\\.venv"
 
-# Install dependencies of upload-addon
-Set-Location $PSScriptRoot
-poetry install --no-root 
-
-# Install uv
-## Download prebuilt binaries latest release, copy it to "C:\.uv", add it to PATH.
-## https://github.com/astral-sh/uv/releases
+# Install mani (runs all the workbench commands, see mani.yaml)
+## Download prebuilt binary latest release, add it to PATH.
+## https://github.com/alajmo/mani/releases

@@ -1,0 +1,124 @@
+# Linux VM config (where the AYON server runs): the server tasks of mani.yaml, same names, bash shell.
+# Select it with `export MANI_CONFIG=mani-linux.yaml` (e.g. in ~/.bashrc) or `mani -c mani-linux.yaml ...`.
+# These tasks are duplicated from mani.yaml on purpose; when you change one, change it in both.
+shell: bash -c
+
+env:
+  SSL_CERT: ""
+  DOCKER_REPO: ayon-docker
+
+# Repos that are not cloned are skipped instead of failing the run.
+specs:
+  default:
+    ignore_non_existing: true
+
+projects:
+  workbench:
+    desc: "This repo itself (the workbench root). Workbench-level tasks run here."
+    path: .
+  ayon-docker:
+    desc: "Docker compose setup for running an AYON server"
+    url: https://github.com/ynput/ayon-docker.git
+    path: ayon-docker
+    tags: [server, essential]
+  Kitsu-for-Docker:
+    desc: "Local Kitsu server in Docker (used for Kitsu addon testing)"
+    url: https://github.com/EmberLightVFX/Kitsu-for-Docker.git
+    path: extras/Kitsu-for-Docker
+    tags: [kitsu, docker]
+
+tasks:
+  server-update:
+    desc: "docker compose pull + up --build. Usage: mani run server-update [DOCKER_REPO=ayon-docker]"
+    target:
+      projects: [workbench]
+    cmd: |
+      cd "$DOCKER_REPO"
+      docker compose pull && docker compose up -d --build
+
+  server-restart:
+    desc: "docker compose restart. Usage: mani run server-restart [DOCKER_REPO=ayon-docker]"
+    target:
+      projects: [workbench]
+    cmd: |
+      cd "$DOCKER_REPO"
+      docker compose restart
+
+  server-rebuild:
+    desc: "docker compose up --build (no pull). Usage: mani run server-rebuild [DOCKER_REPO=ayon-docker]"
+    target:
+      projects: [workbench]
+    cmd: |
+      cd "$DOCKER_REPO"
+      docker compose up -d --build
+
+  server-log:
+    desc: "Dump the last 1000 log lines of a compose service to tmp/<DOCKER_REPO>_<SERVICE>.log. Usage: mani run server-log [DOCKER_REPO=ayon-docker] [SERVICE=server]"
+    env:
+      SERVICE: server
+    target:
+      projects: [workbench]
+    cmd: |
+      cd "$DOCKER_REPO"
+      docker compose logs -t -n 1000 "$SERVICE" > "../tmp/${DOCKER_REPO}_$SERVICE.log" 2>&1
+
+  server-log-live:
+    desc: "Follow the log of a compose service. Usage: mani run server-log-live [DOCKER_REPO=ayon-docker] [SERVICE=server]"
+    env:
+      SERVICE: server
+    target:
+      projects: [workbench]
+    tty: true
+    cmd: |
+      cd "$DOCKER_REPO"
+      docker compose logs -f -t -n 10 "$SERVICE"
+
+  server-release:
+    desc: "Print the RELEASE file of the running server. Usage: mani run server-release [DOCKER_REPO=ayon-docker]"
+    target:
+      projects: [workbench]
+    cmd: |
+      cd "$DOCKER_REPO"
+      docker compose exec server cat RELEASE
+
+  server-prune:
+    desc: "DESTRUCTIVE. docker image prune -a (removes all unused images, asks for confirmation)"
+    target:
+      projects: [workbench]
+    tty: true
+    cmd: docker image prune -a
+
+  frontend-live:
+    desc: "Run the frontend dev server. Expects ayon-frontend cloned in <DOCKER_REPO>/server and already on the right branch. Usage: mani run frontend-live [DOCKER_REPO=ayon-docker]"
+    target:
+      projects: [workbench]
+    tty: true
+    cmd: |
+      cd "$DOCKER_REPO/server/ayon-frontend"
+      yarn install && yarn dev --host 0.0.0.0
+
+  project-backup:
+    desc: "Dump a project to SQL (sudo). Usage: mani run project-backup PROJECT=demo_Commercial [DOCKER_REPO=ayon-docker]"
+    env:
+      PROJECT: demo_Commercial
+    target:
+      projects: [workbench]
+    cmd: |
+      cd "$DOCKER_REPO"
+      sudo make dump projectname="$PROJECT"
+
+  project-restore:
+    desc: "Restore a project from dump.<PROJECT>.sql (sudo). Usage: mani run project-restore PROJECT=demo_Commercial [DOCKER_REPO=ayon-docker]"
+    env:
+      PROJECT: demo_Commercial
+    target:
+      projects: [workbench]
+    cmd: |
+      cd "$DOCKER_REPO"
+      sudo make restore projectname="$PROJECT" "dump.$PROJECT.sql"
+
+  kitsu-update:
+    desc: Pull + rebuild my local Kitsu server (extras/Kitsu-for-Docker)
+    target:
+      projects: [Kitsu-for-Docker]
+    cmd: docker compose pull && docker compose up -d --build

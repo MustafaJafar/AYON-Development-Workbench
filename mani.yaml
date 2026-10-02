@@ -1,0 +1,823 @@
+# Workspace manifest. `mani sync` clones every project listed here.
+# Tags (set by hand; used to browse and relate repos, e.g. `mani list projects --tags houdini`).
+# A tag is only kept if it groups repos or is a filter, so a tag that just repeats a repo's own name is not used.
+#   kind      addon (an AYON addon) | utility (helper tool, plugin or library) | server (server component) | api |
+#             app | example | test | ci | docs | reference (read it to learn from it)
+#   tier      essential (minimum for running an AYON server with a pipeline)
+#   category  3d | 2d-draw | 2d-comp: addons for 3D apps | drawing/painting apps | compositing, editorial and review apps
+#   topic     what repos relate to: an app or service (houdini = ayon-houdini + HuskStandaloneSubmitter +
+#             houdini_PRTROP; kitsu = ayon-kitsu + Kitsu-for-Docker; also nuke, unreal, usd, deadline), a function
+#             (prod-track: production trackers; farm-manager; media-player; pipeline), docker, frontend
+#   optional  kept for reference only: `sync: false`, so `mani sync` and default tasks skip it;
+#             clone with `mani sync -p <repo> --ignore-sync-state`, run tasks on it with `-p <repo>`
+# Tasks are further down; see `mani describe tasks`.
+
+# Tasks need Git Bash. mani's default shell on Windows is PowerShell, and a plain `bash` can resolve to WSL's.
+# 8.3 path because mani splits this string on spaces. The Linux VM uses mani-linux.yaml instead.
+shell: C:/PROGRA~1/Git/usr/bin/bash.exe -c
+
+# DOCKER_REPO: the docker repo the server-* tasks work on (ayon-docker unless overridden).
+# Optional on server-facing tasks: SSL_CERT=<path to CA bundle> (e.g. for a local self-signed ayon-docker).
+# When set, SSL_CERT_FILE and REQUESTS_CA_BUNDLE are exported to the task, see scripts/local-ssl.sh.
+env:
+  SSL_CERT: ""
+  DOCKER_REPO: ayon-docker
+
+# Repos that are not cloned are skipped instead of failing the run.
+specs:
+  default:
+    ignore_non_existing: true
+
+projects:
+  workbench:
+    desc: "This repo itself (the workbench root). Workbench-level tasks run here."
+    path: .
+  ash:
+    desc: "AYON Service Host (ash): runs addon services on the server"
+    url: https://github.com/ynput/ash.git
+    path: ash
+    tags: [utility, docker]
+  ayon-3dsmax:
+    desc: "3ds Max integration addon"
+    url: https://github.com/ynput/ayon-3dsmax.git
+    path: ayon-3dsmax
+    tags: [addon, 3d]
+  ayon-addon-template:
+    desc: "Template for creating new AYON addons"
+    url: https://github.com/ynput/ayon-addon-template.git
+    path: ayon-addon-template
+    tags: [example]
+  ayon-aftereffects:
+    desc: "After Effects integration addon"
+    url: https://github.com/ynput/ayon-aftereffects.git
+    path: ayon-aftereffects
+    tags: [addon, 2d-comp]
+  ayon-airtable:
+    desc: "Airtable integration addon"
+    url: https://github.com/ynput/ayon-airtable.git
+    path: ayon-airtable
+    tags: [addon, prod-track]
+  ayon-applications:
+    desc: "Applications (DCC launch definitions) addon"
+    url: https://github.com/ynput/ayon-applications.git
+    path: ayon-applications
+    tags: [addon, essential]
+  ayon-backend:
+    desc: "AYON server backend (FastAPI)"
+    url: https://github.com/ynput/ayon-backend.git
+    path: ayon-backend
+    tags: [server]
+  ayon-blender:
+    desc: "Blender integration addon"
+    url: https://github.com/ynput/ayon-blender.git
+    path: ayon-blender
+    tags: [addon, 3d]
+  ayon-celaction:
+    desc: "CelAction integration addon"
+    url: https://github.com/ynput/ayon-celaction.git
+    path: ayon-celaction
+    tags: [addon, 2d-draw]
+  ayon-cinema4d:
+    desc: "Cinema 4D integration addon"
+    url: https://github.com/ynput/ayon-cinema4d.git
+    path: ayon-cinema4d
+    tags: [addon, 3d]
+  ayon-clockify:
+    desc: "Clockify integration addon"
+    url: https://github.com/ynput/ayon-clockify.git
+    path: ayon-clockify
+    tags: [addon]
+  ayon-core:
+    desc: "AYON core addon (publish/load pipeline, tools)"
+    url: https://github.com/ynput/ayon-core.git
+    path: ayon-core
+    tags: [addon, essential]
+  ayon-deadline:
+    desc: "Deadline render farm addon"
+    url: https://github.com/ynput/ayon-deadline.git
+    path: ayon-deadline
+    tags: [addon, deadline, farm-manager]
+  ayon-dependencies-tool:
+    desc: "Tool to create/upload AYON dependency packages"
+    url: https://github.com/ynput/ayon-dependencies-tool.git
+    path: ayon-dependencies-tool
+    tags: [utility, pipeline]
+  ayon-djv:
+    desc: "DJV integration addon"
+    url: https://github.com/ynput/ayon-djv.git
+    path: ayon-djv
+    tags: [addon, media-player]
+  ayon-docker:
+    desc: "Docker compose setup for running an AYON server"
+    url: https://github.com/ynput/ayon-docker.git
+    path: ayon-docker
+    tags: [server, docker, essential]
+  ayon-documentation:
+    desc: "AYON documentation website (Docusaurus)"
+    url: https://github.com/ynput/ayon-documentation.git
+    path: ayon-documentation
+    tags: [docs]
+  ayon-equalizer:
+    desc: "3DEqualizer integration addon"
+    url: https://github.com/ynput/ayon-equalizer.git
+    path: ayon-equalizer
+    tags: [addon, 3d]
+  ayon-example-addon:
+    desc: "Minimal example AYON addon"
+    url: https://github.com/ynput/ayon-example-addon.git
+    path: ayon-example-addon
+    tags: [example]
+  ayon-flame:
+    desc: "Flame integration addon"
+    url: https://github.com/ynput/ayon-flame.git
+    path: ayon-flame
+    tags: [addon, 2d-comp]
+  ayon-frontend:
+    desc: "AYON server web frontend (React)"
+    url: https://github.com/ynput/ayon-frontend.git
+    path: ayon-frontend
+    tags: [server]
+  ayon-ftrack:
+    desc: "ftrack integration addon (+ services)"
+    url: https://github.com/ynput/ayon-ftrack.git
+    path: ayon-ftrack
+    tags: [addon, prod-track]
+  ayon-fusion:
+    desc: "Fusion integration addon"
+    url: https://github.com/ynput/ayon-fusion.git
+    path: ayon-fusion
+    tags: [addon, 2d-comp]
+  ayon-harmony:
+    desc: "Harmony integration addon"
+    url: https://github.com/ynput/ayon-harmony.git
+    path: ayon-harmony
+    tags: [addon, 2d-draw]
+  ayon-hiero:
+    desc: "Hiero integration addon"
+    url: https://github.com/ynput/ayon-hiero.git
+    path: ayon-hiero
+    tags: [addon, 2d-comp]
+  ayon-houdini:
+    desc: "Houdini integration addon"
+    url: https://github.com/ynput/ayon-houdini.git
+    path: ayon-houdini
+    tags: [addon, 3d, houdini]
+  ayon-kitsu:
+    desc: "Kitsu integration addon (+ services)"
+    url: https://github.com/ynput/ayon-kitsu.git
+    path: ayon-kitsu
+    tags: [addon, prod-track, kitsu]
+  ayon-launcher:
+    desc: "AYON Launcher (desktop app, installer)"
+    url: https://github.com/ynput/ayon-launcher.git
+    path: ayon-launcher
+    tags: [essential, app]
+  ayon-loki:
+    desc: "Loki addon (BigRoy)"
+    url: https://github.com/BigRoy/ayon-loki.git
+    path: extras/ayon-loki
+    tags: [addon]
+  ayon-marvelous-designer:
+    desc: "Marvelous Designer integration addon"
+    url: https://github.com/ynput/ayon-marvelous-designer.git
+    path: ayon-marvelous-designer
+    tags: [addon, 3d]
+  ayon-maya:
+    desc: "Maya integration addon"
+    url: https://github.com/ynput/ayon-maya.git
+    path: ayon-maya
+    tags: [addon, 3d]
+  ayon-mocha:
+    desc: "Mocha integration addon"
+    url: https://github.com/ynput/ayon-mocha.git
+    path: ayon-mocha
+    tags: [addon, 2d-comp]
+  ayon-motionbuilder:
+    desc: "MotionBuilder integration addon"
+    url: https://github.com/ynput/ayon-motionbuilder.git
+    path: ayon-motionbuilder
+    tags: [addon, 3d]
+  ayon-nuke:
+    desc: "Nuke integration addon"
+    url: https://github.com/ynput/ayon-nuke.git
+    path: ayon-nuke
+    tags: [addon, 2d-comp, nuke]
+  ayon-ocio:
+    desc: "OCIO configs addon"
+    url: https://github.com/ynput/ayon-ocio.git
+    path: ayon-ocio
+    tags: [addon, essential]
+  ayon-openassetio-manager-plugin:
+    desc: "OpenAssetIO manager plugin for AYON"
+    url: https://github.com/ynput/ayon-openassetio-manager-plugin.git
+    path: ayon-openassetio-manager-plugin
+    tags: [utility, nuke]
+  ayon-openrv:
+    desc: "OpenRV integration addon"
+    url: https://github.com/ynput/ayon-openrv.git
+    path: ayon-openrv
+    tags: [addon, media-player]
+  ayon-photoshop:
+    desc: "Photoshop integration addon"
+    url: https://github.com/ynput/ayon-photoshop.git
+    path: ayon-photoshop
+    tags: [addon, 2d-draw]
+  ayon-pipeline-tests:
+    desc: "AYON pipeline tests"
+    url: https://github.com/ynput/ayon-pipeline-tests.git
+    path: ayon-pipeline-tests
+    tags: [test]
+  ayon-premiere:
+    desc: "Premiere integration addon"
+    url: https://github.com/ynput/ayon-premiere.git
+    path: ayon-premiere
+    tags: [addon, 2d-comp]
+  ayon-python-api:
+    desc: "AYON Python API (ayon_api)"
+    url: https://github.com/ynput/ayon-python-api.git
+    path: ayon-python-api
+    tags: [reference, api]
+  ayon-react-components:
+    desc: "AYON React component library"
+    url: https://github.com/ynput/ayon-react-components.git
+    path: ayon-react-components
+    tags: [reference, frontend]
+  ayon-recipes:
+    desc: "AYON recipes (personal fork)"
+    url: https://github.com/MustafaJafar/ayon-recipes.git
+    path: extras/ayon-recipes
+    tags: [example]
+  ayon-resolve:
+    desc: "DaVinci Resolve integration addon"
+    url: https://github.com/ynput/ayon-resolve.git
+    path: ayon-resolve
+    tags: [addon, 2d-comp]
+  ayon-royalrender:
+    desc: "Royal Render farm addon"
+    url: https://github.com/ynput/ayon-royalrender.git
+    path: ayon-royalrender
+    tags: [addon, farm-manager]
+  ayon-shotgrid:
+    desc: "ShotGrid integration addon (+ services)"
+    url: https://github.com/ynput/ayon-shotgrid.git
+    path: ayon-shotgrid
+    tags: [addon, prod-track]
+  ayon-silhouette:
+    desc: "Silhouette integration addon"
+    url: https://github.com/ynput/ayon-silhouette.git
+    path: ayon-silhouette
+    tags: [addon, 2d-comp]
+  ayon-sitesync:
+    desc: "Site Sync addon"
+    url: https://github.com/ynput/ayon-sitesync.git
+    path: ayon-sitesync
+    tags: [addon]
+  ayon-slack:
+    desc: "Slack integration addon"
+    url: https://github.com/ynput/ayon-slack.git
+    path: ayon-slack
+    tags: [addon]
+  ayon-speedtree:
+    desc: "SpeedTree integration addon"
+    url: https://github.com/ynput/ayon-speedtree.git
+    path: ayon-speedtree
+    tags: [addon, 3d]
+  ayon-substance-designer:
+    desc: "Substance Designer integration addon"
+    url: https://github.com/ynput/ayon-substance-designer.git
+    path: ayon-substance-designer
+    tags: [addon, 3d]
+  ayon-substance-painter:
+    desc: "Substance Painter integration addon"
+    url: https://github.com/ynput/ayon-substance-painter.git
+    path: ayon-substance-painter
+    tags: [addon, 3d]
+  ayon-syncsketch:
+    desc: "SyncSketch integration addon"
+    url: https://github.com/ynput/ayon-syncsketch.git
+    path: ayon-syncsketch
+    tags: [addon]
+  ayon-third-party:
+    desc: "Third-party binaries addon (ffmpeg, oiio, ...)"
+    url: https://github.com/ynput/ayon-third-party.git
+    path: ayon-third-party
+    tags: [addon, essential]
+  ayon-timers-manager:
+    desc: "Timers manager addon"
+    url: https://github.com/ynput/ayon-timers-manager.git
+    path: ayon-timers-manager
+    tags: [addon]
+  ayon-traypublisher:
+    desc: "Tray Publisher addon"
+    url: https://github.com/ynput/ayon-traypublisher.git
+    path: ayon-traypublisher
+    tags: [addon, essential]
+  ayon-tvpaint:
+    desc: "TVPaint integration addon"
+    url: https://github.com/ynput/ayon-tvpaint.git
+    path: ayon-tvpaint
+    tags: [addon, 2d-draw]
+  ayon-unreal:
+    desc: "Unreal Engine integration addon"
+    url: https://github.com/ynput/ayon-unreal.git
+    path: ayon-unreal
+    tags: [addon, 3d, unreal]
+  ayon-unreal-plugin:
+    desc: "Unreal Engine plugin for AYON"
+    url: https://github.com/ynput/ayon-unreal-plugin.git
+    path: ayon-unreal-plugin
+    tags: [utility, unreal]
+  ayon-usd:
+    desc: "USD addon"
+    url: https://github.com/ynput/ayon-usd.git
+    path: ayon-usd
+    tags: [addon, usd]
+  ayon-usd-resolver:
+    desc: "AYON USD asset resolver (C++)"
+    url: https://github.com/ynput/ayon-usd-resolver.git
+    path: ayon-usd-resolver
+    tags: [utility, usd]
+  ayon-workflow-nodes:
+    desc: "Workflow nodes"
+    url: https://github.com/ynput/ayon-workflow-nodes.git
+    path: ayon-workflow-nodes
+    tags: [utility]
+  ayon-wrap:
+    desc: "Wrap addon"
+    url: https://github.com/ynput/ayon-wrap.git
+    path: ayon-wrap
+    tags: [addon, 3d]
+  ayon-xstudio:
+    desc: "xStudio integration addon"
+    url: https://github.com/ynput/ayon-xstudio.git
+    path: ayon-xstudio
+    tags: [addon, media-player]
+  ayon-zbrush:
+    desc: "ZBrush integration addon"
+    url: https://github.com/ynput/ayon-zbrush.git
+    path: ayon-zbrush
+    tags: [addon, 3d]
+  houdini_PRTROP:
+    desc: "Houdini PRTROP package (flipswitchingmonkey)"
+    url: https://github.com/flipswitchingmonkey/houdini_PRTROP.git
+    path: extras/houdini_PRTROP
+    sync: false
+    tags: [houdini, utility, optional]
+  ops-repo-automation:
+    desc: "Ynput ops repo automation (CI helpers)"
+    url: https://github.com/ynput/ops-repo-automation.git
+    path: ops-repo-automation
+    tags: [ci]
+  pytest-ayon:
+    desc: "pytest plugin for AYON"
+    url: https://github.com/ynput/pytest-ayon.git
+    path: pytest-ayon
+    tags: [test]
+  HuskStandaloneSubmitter:
+    desc: "Standalone Husk render submitter for Deadline (BigRoy)"
+    url: https://github.com/BigRoy/HuskStandaloneSubmitter.git
+    path: extras/HuskStandaloneSubmitter
+    tags: [deadline, houdini]
+  Kitsu-for-Docker:
+    desc: "Local Kitsu server in Docker (used for Kitsu addon testing)"
+    url: https://github.com/EmberLightVFX/Kitsu-for-Docker.git
+    path: extras/Kitsu-for-Docker
+    tags: [kitsu, docker]
+
+tasks:
+  # ---------------------------------------------------------------- Git (any repo)
+  status:
+    desc: Short git status + current branch
+    target:
+      tags_expr: "!optional"
+    cmd: git status -sb
+
+  remotes:
+    desc: List git remotes
+    target:
+      tags_expr: "!optional"
+    cmd: git remote -v
+
+  update-default:
+    desc: Checkout the default branch (main/develop/..., from origin/HEAD) and pull it; skips dirty repos
+    target:
+      tags_expr: "!optional"
+    cmd: |
+      if [ -n "$(git status --porcelain)" ]; then echo "dirty, skipped"; exit 0; fi
+      git remote set-head origin --auto >/dev/null 2>&1
+      branch=$(git symbolic-ref --short refs/remotes/origin/HEAD | sed 's#^origin/##')
+      echo "default branch: $branch"
+      git checkout "$branch" && git pull origin "$branch"
+
+  update-branch:
+    desc: "Checkout + pull a branch. Usage: mani run update-branch -p <repo> BRANCH=develop"
+    env:
+      BRANCH: develop
+    cmd: git checkout "$BRANCH" && git pull origin "$BRANCH"
+
+  submodules:
+    desc: Init/update submodules (mani sync does not use --recurse-submodules)
+    target:
+      tags_expr: "!optional"
+    cmd: git submodule update --init --recursive
+
+  add-remote:
+    desc: "Add a fork as a remote. Usage: mani run add-remote -p <repo> REMOTE=<github-user>"
+    env:
+      REMOTE: MustafaJafar
+    cmd: |
+      repo=$(basename "$PWD")
+      git remote add "$REMOTE" "https://github.com/$REMOTE/$repo.git" && echo "Remote '$REMOTE' added to $repo"
+
+  tag-latest:
+    desc: "Detach HEAD on the most recent tag (handy for addons with services). Usage: mani run tag-latest -p <repo>"
+    cmd: |
+      git fetch origin --tags
+      tag=$(git describe --tags --abbrev=0)
+      echo "Most recent tag is: $tag"
+      git checkout "tags/$tag"
+
+  tag-checkout:
+    desc: "Detach HEAD on a tag. Usage: mani run tag-checkout -p <repo> TAG=1.2.3"
+    env:
+      TAG: ""
+    cmd: |
+      [ -n "$TAG" ] || { echo "TAG is required"; exit 1; }
+      git fetch origin "$TAG" && git checkout FETCH_HEAD
+
+  # ---------------------------------------------------------------- Python tooling
+  ruff-check:
+    desc: "Ruff check. Usage: mani run ruff-check -p <repo> [FILE=path] (empty FILE = whole repo)"
+    env:
+      FILE: ""
+    cmd: ruff check $FILE
+
+  ruff-fix:
+    desc: "Ruff check --fix. Usage: mani run ruff-fix -p <repo> [FILE=path] (empty FILE = whole repo)"
+    env:
+      FILE: ""
+    cmd: ruff check --fix $FILE
+
+  jupyter:
+    desc: Launch Jupyter notebook in tmp/jupyter
+    target:
+      projects: [workbench]
+    tty: true
+    cmd: |
+      mkdir -p tmp/jupyter
+      cd tmp/jupyter && jupyter notebook
+
+  # ---------------------------------------------------------------- Addons: zip + upload to my server
+  # Needs scripts/.env (AYON_SERVER_URL, AYON_API_KEY) and uv (`uv run` creates the venv in scripts on first use)
+  # (see scripts/setup-my-dev-env.ps1).
+  addon-package:
+    desc: "Create an addon package zip into tmp/packages. Usage: mani run addon-package -p <repo>"
+    cmd: python create_package.py -o ../tmp/packages
+
+  addon-upload:
+    desc: "Create an addon package and upload it. Usage: mani run addon-upload -p <repo>"
+    cmd: |
+      . ../scripts/local-ssl.sh
+      python create_package.py
+      addon="$(pwd -W 2>/dev/null || pwd)"
+      cd ../scripts && uv run python upload-addon.py --addon "$addon"
+
+  addons-upload-all:
+    desc: Clear tmp/packages, package my usual addons (the `-p` list below), upload them all
+    target:
+      projects: [workbench]
+    cmd: |
+      . scripts/local-ssl.sh
+      rm -rf tmp/packages && mkdir -p tmp/packages
+      mani run addon-package -p ayon-third-party,ayon-ocio,ayon-applications,ayon-core,ayon-traypublisher,ayon-blender,ayon-deadline,ayon-houdini,ayon-maya,ayon-nuke,ayon-usd
+      pkg="$(pwd -W 2>/dev/null || pwd)/tmp/packages"
+      cd scripts && uv run python upload-addon.py --package-dir "$pkg"
+
+  # ---------------------------------------------------------------- AYON server (docker)
+  # These run from the workbench root against DOCKER_REPO (default ayon-docker): mani run server-update DOCKER_REPO=<repo>
+  server-update:
+    desc: "docker compose pull + up --build. Usage: mani run server-update [DOCKER_REPO=ayon-docker]"
+    target:
+      projects: [workbench]
+    cmd: |
+      cd "$DOCKER_REPO"
+      docker compose pull && docker compose up -d --build
+
+  server-restart:
+    desc: "docker compose restart. Usage: mani run server-restart [DOCKER_REPO=ayon-docker]"
+    target:
+      projects: [workbench]
+    cmd: |
+      cd "$DOCKER_REPO"
+      docker compose restart
+
+  server-rebuild:
+    desc: "docker compose up --build (no pull). Usage: mani run server-rebuild [DOCKER_REPO=ayon-docker]"
+    target:
+      projects: [workbench]
+    cmd: |
+      cd "$DOCKER_REPO"
+      docker compose up -d --build
+
+  server-log:
+    desc: "Dump the last 1000 log lines of a compose service to tmp/<DOCKER_REPO>_<SERVICE>.log. Usage: mani run server-log [DOCKER_REPO=ayon-docker] [SERVICE=server]"
+    env:
+      SERVICE: server
+    target:
+      projects: [workbench]
+    cmd: |
+      cd "$DOCKER_REPO"
+      docker compose logs -t -n 1000 "$SERVICE" > "../tmp/${DOCKER_REPO}_$SERVICE.log" 2>&1
+
+  server-log-live:
+    desc: "Follow the log of a compose service. Usage: mani run server-log-live [DOCKER_REPO=ayon-docker] [SERVICE=server]"
+    env:
+      SERVICE: server
+    target:
+      projects: [workbench]
+    tty: true
+    cmd: |
+      cd "$DOCKER_REPO"
+      docker compose logs -f -t -n 10 "$SERVICE"
+
+  server-release:
+    desc: "Print the RELEASE file of the running server. Usage: mani run server-release [DOCKER_REPO=ayon-docker]"
+    target:
+      projects: [workbench]
+    cmd: |
+      cd "$DOCKER_REPO"
+      docker compose exec server cat RELEASE
+
+  server-prune:
+    desc: "DESTRUCTIVE. docker image prune -a (removes all unused images, asks for confirmation)"
+    target:
+      projects: [workbench]
+    tty: true
+    cmd: docker image prune -a
+
+  frontend-live:
+    desc: "Run the frontend dev server. Expects ayon-frontend cloned in <DOCKER_REPO>/server and already on the right branch. Usage: mani run frontend-live [DOCKER_REPO=ayon-docker]"
+    target:
+      projects: [workbench]
+    tty: true
+    cmd: |
+      cd "$DOCKER_REPO/server/ayon-frontend"
+      yarn install && yarn dev --host 0.0.0.0
+
+  project-backup:
+    desc: "Dump a project to SQL (sudo). Usage: mani run project-backup PROJECT=demo_Commercial [DOCKER_REPO=ayon-docker]"
+    env:
+      PROJECT: demo_Commercial
+    target:
+      projects: [workbench]
+    cmd: |
+      cd "$DOCKER_REPO"
+      sudo make dump projectname="$PROJECT"
+
+  project-restore:
+    desc: "Restore a project from dump.<PROJECT>.sql (sudo). Usage: mani run project-restore PROJECT=demo_Commercial [DOCKER_REPO=ayon-docker]"
+    env:
+      PROJECT: demo_Commercial
+    target:
+      projects: [workbench]
+    cmd: |
+      cd "$DOCKER_REPO"
+      sudo make restore projectname="$PROJECT" "dump.$PROJECT.sql"
+
+  kitsu-update:
+    desc: Pull + rebuild my local Kitsu server (extras/Kitsu-for-Docker)
+    target:
+      projects: [Kitsu-for-Docker]
+    cmd: docker compose pull && docker compose up -d --build
+
+  # ---------------------------------------------------------------- Documentation
+  docs-init:
+    desc: Install yarn + docusaurus for ayon-documentation (first time only)
+    target:
+      projects: [ayon-documentation]
+    cmd: |
+      cd website
+      npm install -g yarn && yarn add docusaurus --dev
+
+  docs-run:
+    desc: Serve ayon-documentation locally on :3000 (clears the .docusaurus cache first)
+    target:
+      projects: [ayon-documentation]
+    tty: true
+    cmd: |
+      cd website
+      rm -rf .docusaurus
+      yarn start
+
+  docs-online:
+    desc: Expose localhost:3000 temporarily via ngrok
+    target:
+      projects: [workbench]
+    tty: true
+    cmd: ngrok http 3000
+
+  # ---------------------------------------------------------------- Launcher
+  launcher-env:
+    desc: Create the launcher venv and install runtime dependencies
+    target:
+      projects: [ayon-launcher]
+    cmd: |
+      pwsh tools/manage.ps1 create-env
+      pwsh tools/manage.ps1 install-runtime-dependencies
+
+  launcher-build-upload:
+    desc: Build the installer and upload it (AYON_SERVER_URL / AYON_API_KEY come from scripts/.env)
+    target:
+      projects: [ayon-launcher]
+    cmd: |
+      . ../scripts/local-ssl.sh
+      while IFS='=' read -r k v; do
+        [ -n "$v" ] && export "$k=$v"
+      done < <(tr -d '\r' < ../scripts/.env)
+      pwsh -NoProfile -Command 'tools/manage.ps1 --build-make-installer --force' &&
+      pwsh -NoProfile -Command 'tools/manage.ps1 upload --server $env:AYON_SERVER_URL --api-key $env:AYON_API_KEY --force'
+
+  launcher-prod:
+    desc: Run the launcher from code, production bundle
+    target:
+      projects: [ayon-launcher]
+    tty: true
+    cmd: |
+      . ../scripts/local-ssl.sh
+      pwsh -NoProfile -Command "tools/ayon_console.bat"
+
+  launcher-staging:
+    desc: Run the launcher from code, staging bundle
+    target:
+      projects: [ayon-launcher]
+    tty: true
+    cmd: |
+      . ../scripts/local-ssl.sh
+      pwsh -NoProfile -Command "tools/ayon_console.bat --use-staging"
+
+  launcher-dev:
+    desc: Run the launcher from code, dev bundle
+    target:
+      projects: [ayon-launcher]
+    tty: true
+    cmd: |
+      . ../scripts/local-ssl.sh
+      pwsh -NoProfile -Command "tools/ayon_console.bat --use-dev"
+
+  publish-report-viewer:
+    desc: Launch the publish report viewer (dev bundle)
+    target:
+      projects: [ayon-launcher]
+    tty: true
+    cmd: |
+      . ../scripts/local-ssl.sh
+      pwsh -NoProfile -Command "tools/ayon_console.bat --use-dev publish-report-viewer"
+
+  traypublisher-dev:
+    desc: Launch Tray Publisher (dev bundle)
+    target:
+      projects: [ayon-launcher]
+    tty: true
+    cmd: |
+      . ../scripts/local-ssl.sh
+      pwsh -NoProfile -Command "tools/ayon_console.bat --use-dev addon traypublisher launch"
+
+  # ---------------------------------------------------------------- Addon env / dependency packages
+  core-env:
+    desc: Create the ayon-core venv (tools/manage.ps1 create-env)
+    target:
+      projects: [ayon-core]
+    cmd: pwsh tools/manage.ps1 create-env
+
+  deptool-install:
+    desc: Install ayon-dependencies-tool (copies scripts/.env into it first)
+    target:
+      projects: [ayon-dependencies-tool]
+    cmd: |
+      cp ../scripts/.env .env
+      pwsh start.ps1 install
+
+  deptool-create:
+    desc: "Create a dependency package WITHOUT uploading. Usage: mani run deptool-create BUNDLE=AYON-Dev OUTPUT_DIR=<path>"
+    env:
+      BUNDLE: AYON-Dev
+      OUTPUT_DIR: ../tmp/packages
+    target:
+      projects: [ayon-dependencies-tool]
+    cmd: |
+      . ../scripts/local-ssl.sh
+      pwsh start.ps1 create -b "$BUNDLE" --skip-upload --output-dir "$OUTPUT_DIR"
+
+  deptool-create-upload:
+    desc: "Create a dependency package and upload it. Usage: mani run deptool-create-upload BUNDLE=AYON-Dev OUTPUT_DIR=<path>"
+    env:
+      BUNDLE: AYON-Dev
+      OUTPUT_DIR: ../tmp/packages
+    target:
+      projects: [ayon-dependencies-tool]
+    cmd: |
+      . ../scripts/local-ssl.sh
+      pwsh start.ps1 create -b "$BUNDLE" --output-dir "$OUTPUT_DIR"
+
+  # ---------------------------------------------------------------- Addon services (run from code)
+  # BUNDLE is the bundle variant the service connects as. The *-install tasks copy scripts/.env in.
+  shotgrid-install:
+    desc: Install ShotGrid service tools (copies scripts/.env first)
+    target:
+      projects: [ayon-shotgrid]
+    cmd: |
+      cp ../scripts/.env service_tools/.env
+      pwsh service_tools/manage.ps1 create-env
+
+  shotgrid-services:
+    desc: Run all ShotGrid services (uses extras/cacert.pem as SHOTGUN_API_CACERTS)
+    target:
+      projects: [ayon-shotgrid]
+    tty: true
+    cmd: |
+      . ../scripts/local-ssl.sh
+      export SHOTGUN_API_CACERTS="$(cd ../extras && pwd -W)/cacert.pem"
+      cd service_tools && pwsh ./manage.ps1 services
+
+  shotgrid-leecher:
+    desc: "Run the ShotGrid leecher. Usage: mani run shotgrid-leecher BUNDLE=AYON-Dev"
+    env:
+      BUNDLE: AYON-Dev
+    target:
+      projects: [ayon-shotgrid]
+    tty: true
+    cmd: |
+      . ../scripts/local-ssl.sh
+      pwsh service_tools/manage.ps1 leecher --variant "$BUNDLE"
+
+  shotgrid-processor:
+    desc: "Run the ShotGrid processor. Usage: mani run shotgrid-processor BUNDLE=AYON-Dev"
+    env:
+      BUNDLE: AYON-Dev
+    target:
+      projects: [ayon-shotgrid]
+    tty: true
+    cmd: |
+      . ../scripts/local-ssl.sh
+      pwsh service_tools/manage.ps1 processor --variant "$BUNDLE"
+
+  ftrack-install:
+    desc: Install ftrack service tools (copies scripts/.env first)
+    target:
+      projects: [ayon-ftrack]
+    cmd: |
+      cp ../scripts/.env service_tools/.env
+      pwsh service_tools/manage.ps1 install
+
+  ftrack-services:
+    desc: "Run all ftrack services. Usage: mani run ftrack-services BUNDLE=AYON-Dev"
+    env:
+      BUNDLE: AYON-Dev
+    target:
+      projects: [ayon-ftrack]
+    tty: true
+    cmd: |
+      . ../scripts/local-ssl.sh
+      pwsh service_tools/manage.ps1 services --variant "$BUNDLE"
+
+  ftrack-leecher:
+    desc: "Run the ftrack leecher. Usage: mani run ftrack-leecher BUNDLE=AYON-Dev"
+    env:
+      BUNDLE: AYON-Dev
+    target:
+      projects: [ayon-ftrack]
+    tty: true
+    cmd: |
+      . ../scripts/local-ssl.sh
+      pwsh service_tools/manage.ps1 leecher --variant "$BUNDLE"
+
+  ftrack-processor:
+    desc: "Run the ftrack processor. Usage: mani run ftrack-processor BUNDLE=AYON-Dev"
+    env:
+      BUNDLE: AYON-Dev
+    target:
+      projects: [ayon-ftrack]
+    tty: true
+    cmd: |
+      . ../scripts/local-ssl.sh
+      pwsh service_tools/manage.ps1 processor --variant "$BUNDLE"
+
+  kitsu-processor-install:
+    desc: Install the Kitsu processor service (still poetry, its manage.ps1 requires it; copies scripts/.env first)
+    target:
+      projects: [ayon-kitsu]
+    cmd: |
+      cp ../scripts/.env services/processor/.env
+      cd services/processor && poetry install --no-root
+
+  kitsu-processor:
+    desc: Run the Kitsu processor service from code
+    target:
+      projects: [ayon-kitsu]
+    tty: true
+    cmd: |
+      . ../scripts/local-ssl.sh
+      # ayon_api.init_service() expects these two to resolve the service context.
+      export AYON_ADDON_NAME=kitsu
+      export AYON_ADDON_VERSION=$(python -c 'content={}; exec(open("package.py").read(), content); print(content["version"])')
+      cd services/processor && pwsh ./manage.ps1 run

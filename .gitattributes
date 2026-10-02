@@ -1,0 +1,2 @@
+# Shell scripts are run by Git Bash / Linux: they must stay LF even when core.autocrlf=true.
+*.sh text eol=lf

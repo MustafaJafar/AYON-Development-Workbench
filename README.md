@@ -10,8 +10,8 @@ Drawing inspiration from the early days of AYON development, when all add-ons we
 
 Here's a quick peek at what this repository offers, but you'll probably want to dive in and explore it yourself.
 
-- The commands are designed to be relative to your working directory, which means there's no need for a specific directory name. You can copy and paste `.vscode` directory wherever you prefer.
-- It includes a command for cloning some essential official repositories at once, as well as an individual command for fetching an official repo based on you input.
+- The commands are designed to be relative to your working directory, which means there's no need for a specific directory name. You can copy and paste `mani.yaml`, `scripts` and `.vscode` wherever you prefer.
+- It includes commands for cloning all the repos listed in `mani.yaml` at once, or just one (`mani sync -p <repo>`).
 - There's a command available for updating the development environment of both the launcher and core repositories.
 - You can create and upload addon zip files using a simple command.
 - Commands are provided for initializing and running AYON documentation.
@@ -19,19 +19,30 @@ Here's a quick peek at what this repository offers, but you'll probably want to 
 - It also offers key settings to add the client code of multiple repositories as sources, enabling the Python extension to search for function definitions.
 
 > [!NOTE]  
-> [upload-addon.py](.vscode/scripts/upload-addon.py) expects some dev initialization,
-> you can use my [setup-my-dev-env.ps1](.vscode/scripts/setup-my-dev-env.ps1) via
+> [upload-addon.py](scripts/upload-addon.py) expects some dev initialization,
+> you can use my [setup-my-dev-env.ps1](scripts/setup-my-dev-env.ps1) via
 > ```
-> ./.vscode/scripts/setup-my-dev-env.ps1
+> ./scripts/setup-my-dev-env.ps1
 > ```
-> or manually via
+> or manually, after [installing uv](https://docs.astral.sh/uv/getting-started/installation/), via
 > ```
->pip install poetry
->cd .vscode\scripts\.venv
->poetry install --no-root 
+> cd scripts
+> uv sync
 > ```
-> or you can even remove poetry commands and use plain python commands in my bat files [create-addon.bat](.vscode/scripts/create-addon.bat) and [create-all-addons.bat](.vscode/scripts/create-all-addons.bat). however, you need to install the dependencies manually via
-> ```
-> pip install python-dotenv
-> pip install ayon-python-api
-> ```
+> `mani run addon-upload` / `addons-upload-all` then run the script with `uv run`, which also creates the environment on first use.
+
+## Claude Code / mani
+Commands now live in [`mani.yaml`](mani.yaml) (install [mani](https://github.com/alajmo/mani)), which is the single source of truth:
+- `mani sync` clones every repo listed there (`mani sync -p ayon-core` for one); `mani list projects` shows them with tags.
+- `mani describe tasks` lists the tasks: git helpers (`status`, `update-default`, `add-remote`, ...), addon packaging/upload, launcher, dependency packages, addon services, docker server and docs.
+- `mani-linux.yaml` has just the server tasks for the Linux VM, under the same names (`export MANI_CONFIG=mani-linux.yaml`).
+- `.vscode/tasks.json` just wraps those tasks for the VS Code UI (so the commands are the same whether you click or type).
+- [`CLAUDE.md`](CLAUDE.md) tells Claude Code about the layout and which command to use for what.
+
+
+## Folder layout
+- root: Ynput repos only, one folder per repo.
+- `extras/`: anything extra, like notes or summaries, or repos from other orgs (e.g. `HuskStandaloneSubmitter`).
+- `scripts/`: helper scripts used by the mani tasks (upload, setup, `.env`).
+- `tmp/`: scratch files; clear it whenever you like.
+- `tests/`: test scripts and test data.
