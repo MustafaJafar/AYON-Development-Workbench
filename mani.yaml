@@ -13,8 +13,10 @@
 # Tasks are further down; see `mani describe tasks`.
 
 # Tasks need Git Bash. mani's default shell on Windows is PowerShell, and a plain `bash` can resolve to WSL's.
+# Use Git's bin/bash.exe wrapper: it puts Git's coreutils (basename, dirname, cygpath, ...) on PATH, which
+# usr/bin/bash.exe does not when started from PowerShell/cmd, and it breaks the pyenv shims (ruff, ...).
 # 8.3 path because mani splits this string on spaces. The Linux VM uses mani-linux.yaml instead.
-shell: C:/PROGRA~1/Git/usr/bin/bash.exe -c
+shell: C:/PROGRA~1/Git/bin/bash.exe -c
 
 # DOCKER_REPO: the docker repo the server-* tasks work on (ayon-docker unless overridden).
 # Optional on server-facing tasks: SSL_CERT=<path to CA bundle> (e.g. for a local self-signed ayon-docker).
