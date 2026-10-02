@@ -217,6 +217,11 @@ projects:
     url: https://github.com/ynput/ayon-openrv.git
     path: ayon-openrv
     tags: [addon, media-player]
+  ayon-perforce:
+    desc: "Version control addon with a Perforce implementation"
+    url: https://github.com/ynput/ayon-perforce.git
+    path: ayon-perforce
+    tags: [addon, unreal]
   ayon-photoshop:
     desc: "Photoshop integration addon"
     url: https://github.com/ynput/ayon-photoshop.git
