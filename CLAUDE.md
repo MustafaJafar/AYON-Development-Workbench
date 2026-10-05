@@ -41,7 +41,8 @@ Tags are set by hand (full legend in the header of `mani.yaml`): a kind (`addon`
 | `mani run core-env`, `traypublisher-dev`, `publish-report-viewer` | ayon-core env and dev-bundle launches |
 | `mani run deptool-install`, `deptool-create[-upload] BUNDLE=<b> OUTPUT_DIR=<p>` | Dependency packages (`-upload` also uploads) |
 | `mani run shotgrid-*`, `ftrack-*`, `kitsu-processor[-install]` | Install and run addon services from code (`BUNDLE=<variant>`) |
-| `mani run server-update\|restart\|rebuild\|log\|log-live\|release [DOCKER_REPO=<repo>]` | Docker compose operations for the server. `DOCKER_REPO` is the docker repo folder (default `ayon-docker`); `log`/`log-live` take `SERVICE=<compose service>` (default `server`) |
+| `mani run docker-clone [DOCKER_REPO=<repo>]` | `git clone https://github.com/ynput/$DOCKER_REPO.git` (default `ayon-docker`; skipped if the folder exists). A task, not a mani project, because mani can't expand env vars in a project url |
+| `mani run server-update\|restart\|rebuild\|log\|log-live\|release [DOCKER_REPO=<repo>]` | Docker compose operations for the deployed server. `DOCKER_REPO` is the docker repo folder (default `ayon-docker`); `log`/`log-live` take `SERVICE=<compose service>` (default `server`) |
 | `mani run frontend-live [DOCKER_REPO=<repo>]` | Frontend dev server from `<docker repo>/server/ayon-frontend` |
 | `mani run project-backup\|project-restore PROJECT=<name> [DOCKER_REPO=<repo>]` | Dump / restore a project (`sudo make`) |
 | `mani run kitsu-update` | Pull + rebuild the local Kitsu server |

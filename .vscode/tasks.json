@@ -102,6 +102,12 @@
             "problemMatcher": []
         },
         {
+            "label": "Clone AYON docker repo",
+            "type": "shell",
+            "command": "mani run docker-clone DOCKER_REPO=${input:docker_repo}",
+            "problemMatcher": []
+        },
+        {
             "label": "Update AYON Server",
             "type": "shell",
             "command": "mani run server-update DOCKER_REPO=${input:docker_repo}",

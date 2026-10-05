@@ -502,8 +502,20 @@ tasks:
 
   # ---------------------------------------------------------------- AYON server (docker)
   # These run from the workbench root against DOCKER_REPO (default ayon-docker): mani run server-update DOCKER_REPO=<repo>
+  # docker-clone clones it first (mani cannot expand $DOCKER_REPO in a project url, so it is a task, not a project).
+  docker-clone:
+    desc: "git clone https://github.com/ynput/$DOCKER_REPO.git (default ayon-docker; skipped if the folder exists). Usage: mani run docker-clone [DOCKER_REPO=<repo>]"
+    target:
+      projects: [workbench]
+    cmd: |
+      if [ -d "$DOCKER_REPO" ]; then
+        echo "$DOCKER_REPO already exists, skipping clone"
+      else
+        git clone "https://github.com/ynput/$DOCKER_REPO.git"
+      fi
+
   server-update:
-    desc: "docker compose pull + up --build. Usage: mani run server-update [DOCKER_REPO=ayon-docker]"
+    desc: "docker compose pull + up --build in $DOCKER_REPO (default ayon-docker). Usage: mani run server-update [DOCKER_REPO=<repo>]"
     target:
       projects: [workbench]
     cmd: |
@@ -511,7 +523,7 @@ tasks:
       docker compose pull && docker compose up -d --build
 
   server-restart:
-    desc: "docker compose restart. Usage: mani run server-restart [DOCKER_REPO=ayon-docker]"
+    desc: "docker compose restart in $DOCKER_REPO (default ayon-docker). Usage: mani run server-restart [DOCKER_REPO=<repo>]"
     target:
       projects: [workbench]
     cmd: |
@@ -519,7 +531,7 @@ tasks:
       docker compose restart
 
   server-rebuild:
-    desc: "docker compose up --build (no pull). Usage: mani run server-rebuild [DOCKER_REPO=ayon-docker]"
+    desc: "docker compose up --build (no pull) in $DOCKER_REPO (default ayon-docker). Usage: mani run server-rebuild [DOCKER_REPO=<repo>]"
     target:
       projects: [workbench]
     cmd: |
@@ -527,7 +539,7 @@ tasks:
       docker compose up -d --build
 
   server-log:
-    desc: "Dump the last 1000 log lines of a compose service to tmp/<DOCKER_REPO>_<SERVICE>.log. Usage: mani run server-log [DOCKER_REPO=ayon-docker] [SERVICE=server]"
+    desc: "Dump the last 1000 log lines of $SERVICE (default server) in $DOCKER_REPO (default ayon-docker) to tmp/${DOCKER_REPO}_$SERVICE.log. Usage: mani run server-log [DOCKER_REPO=<repo>] [SERVICE=<service>]"
     env:
       SERVICE: server
     target:
@@ -537,7 +549,7 @@ tasks:
       docker compose logs -t -n 1000 "$SERVICE" > "../tmp/${DOCKER_REPO}_$SERVICE.log" 2>&1
 
   server-log-live:
-    desc: "Follow the log of a compose service. Usage: mani run server-log-live [DOCKER_REPO=ayon-docker] [SERVICE=server]"
+    desc: "Follow the log of $SERVICE (default server) in $DOCKER_REPO (default ayon-docker). Usage: mani run server-log-live [DOCKER_REPO=<repo>] [SERVICE=<service>]"
     env:
       SERVICE: server
     target:
@@ -548,7 +560,7 @@ tasks:
       docker compose logs -f -t -n 10 "$SERVICE"
 
   server-release:
-    desc: "Print the RELEASE file of the running server. Usage: mani run server-release [DOCKER_REPO=ayon-docker]"
+    desc: "Print the RELEASE file of the server running from $DOCKER_REPO (default ayon-docker). Usage: mani run server-release [DOCKER_REPO=<repo>]"
     target:
       projects: [workbench]
     cmd: |
@@ -563,7 +575,7 @@ tasks:
     cmd: docker image prune -a
 
   frontend-live:
-    desc: "Run the frontend dev server. Expects ayon-frontend cloned in <DOCKER_REPO>/server and already on the right branch. Usage: mani run frontend-live [DOCKER_REPO=ayon-docker]"
+    desc: "Run the frontend dev server from $DOCKER_REPO/server/ayon-frontend (default ayon-docker; clone it there and check out the right branch first). Usage: mani run frontend-live [DOCKER_REPO=<repo>]"
     target:
       projects: [workbench]
     tty: true
@@ -572,7 +584,7 @@ tasks:
       yarn install && yarn dev --host 0.0.0.0
 
   project-backup:
-    desc: "Dump a project to SQL (sudo). Usage: mani run project-backup PROJECT=demo_Commercial [DOCKER_REPO=ayon-docker]"
+    desc: "Dump project $PROJECT to SQL with sudo make in $DOCKER_REPO (default ayon-docker). Usage: mani run project-backup PROJECT=<name> [DOCKER_REPO=<repo>]"
     env:
       PROJECT: demo_Commercial
     target:
@@ -582,7 +594,7 @@ tasks:
       sudo make dump projectname="$PROJECT"
 
   project-restore:
-    desc: "Restore a project from dump.<PROJECT>.sql (sudo). Usage: mani run project-restore PROJECT=demo_Commercial [DOCKER_REPO=ayon-docker]"
+    desc: "Restore project $PROJECT from dump.$PROJECT.sql with sudo make in $DOCKER_REPO (default ayon-docker). Usage: mani run project-restore PROJECT=<name> [DOCKER_REPO=<repo>]"
     env:
       PROJECT: demo_Commercial
     target:
