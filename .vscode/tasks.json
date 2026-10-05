@@ -310,6 +310,19 @@
             "type": "shell",
             "command": "mani run kitsu-processor SSL_CERT=\"${input:ssl_cert}\"",
             "problemMatcher": []
+        },
+        // Linux VM only: make the Linux config the default mani.yaml, and undo it (run to-win before git pull).
+        {
+            "label": "Use Linux mani config (VM only)",
+            "type": "shell",
+            "command": "mani run to-linux",
+            "problemMatcher": []
+        },
+        {
+            "label": "Use Windows mani config again (VM only)",
+            "type": "shell",
+            "command": "mani run to-win",
+            "problemMatcher": []
         }
     ],
     "inputs": [

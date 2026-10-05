@@ -35,7 +35,7 @@ Here's a quick peek at what this repository offers, but you'll probably want to 
 Commands now live in [`mani.yaml`](mani.yaml) (install [mani](https://github.com/alajmo/mani)), which is the single source of truth:
 - `mani sync` clones every repo listed there (`mani sync -p ayon-core` for one); `mani list projects` shows them with tags.
 - `mani describe tasks` lists the tasks: git helpers (`status`, `update-default`, `add-remote`, ...), addon packaging/upload, launcher, dependency packages, addon services, docker server and docs.
-- `mani-linux.yaml` has just the server tasks for the Linux VM, under the same names (`export MANI_CONFIG=mani-linux.yaml`).
+- `mani-linux.yaml` has just the server tasks for the Linux VM, under the same names (see [Linux VM](#linux-vm)).
 - `.vscode/tasks.json` just wraps those tasks for the VS Code UI (so the commands are the same whether you click or type).
 - [`CLAUDE.md`](CLAUDE.md) tells Claude Code about the layout and which command to use for what.
 
@@ -46,3 +46,19 @@ Commands now live in [`mani.yaml`](mani.yaml) (install [mani](https://github.com
 - `scripts/`: helper scripts used by the mani tasks (upload, setup, `.env`).
 - `tmp/`: scratch files; clear it whenever you like.
 - `tests/`: test scripts and test data.
+
+## Linux VM
+On the VM the server tasks live in `mani-linux.yaml`. mani loads `mani.yaml` by default, which is the Windows config
+(its `shell:` does not exist on Linux, so tasks would print only their header and nothing else). Pick one:
+
+- Pass the file each time: `mani -c mani-linux.yaml run <task>`, or alias it in `~/.bashrc`:
+  `alias mani='mani -c ~/AYON/mani-linux.yaml'` (interactive terminals only, not VS Code tasks).
+  `MANI_CONFIG` does **not** work: mani ignores it when a `mani.yaml` is in the current folder or a parent.
+- Or make the Linux config the default by swapping the files, which also covers VS Code tasks:
+  ```
+  mani run to-linux      # mani.yaml -> mani-win.yaml, mani-linux.yaml -> mani.yaml
+  mani run to-win        # undo it
+  ```
+  Undo it before pulling, then swap again: `mani run to-win && git pull && mani run to-linux`.
+  By hand that is `mv mani.yaml mani-win.yaml` and `mv mani-linux.yaml mani.yaml` (and the reverse).
+  Git will show the swapped files as changed: do not commit them from the VM.

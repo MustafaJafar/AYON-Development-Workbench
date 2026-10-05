@@ -1,6 +1,9 @@
 # Linux VM config (where the AYON server runs): the server tasks of mani.yaml, same names, bash shell.
-# Select it with `export MANI_CONFIG=mani-linux.yaml` (e.g. in ~/.bashrc) or `mani -c mani-linux.yaml ...`.
-# These tasks are duplicated from mani.yaml on purpose; when you change one, change it in both.
+# Select it with `mani -c mani-linux.yaml run <task>` (e.g. `alias mani='mani -c ~/AYON/mani-linux.yaml'` in ~/.bashrc),
+# or make it the default with `mani run to-linux` (swaps the files, see the README), undone by `to-win` below.
+# Do NOT rely on MANI_CONFIG: mani ignores it when a mani.yaml is in the current folder or a parent, so it would
+# load the Windows mani.yaml, whose `shell:` does not exist on Linux, and every task prints only its header.
+# The tasks are duplicated from mani.yaml on purpose; when you change one, change it in both (not to-linux/to-win).
 shell: bash -c
 
 env:
@@ -122,3 +125,16 @@ tasks:
     target:
       projects: [Kitsu-for-Docker]
     cmd: docker compose pull && docker compose up -d --build
+
+  # ---------------------------------------------------------------- Undo `mani run to-linux` (defined in mani.yaml)
+  # Not duplicated in mani.yaml on purpose. Run it before `git pull`, then `mani run to-linux` again.
+  to-win:
+    desc: "LINUX VM ONLY. mani.yaml -> mani-linux.yaml and mani-win.yaml -> mani.yaml. Run before git pull"
+    target:
+      projects: [workbench]
+    cmd: |
+      [ -f mani-win.yaml ] || { echo "mani-win.yaml not found, not swapped"; exit 1; }
+      [ ! -e mani-linux.yaml ] || { echo "mani-linux.yaml already exists, not swapped?"; exit 1; }
+      mv mani.yaml mani-linux.yaml
+      mv mani-win.yaml mani.yaml
+      echo "Done: mani.yaml is the Windows config again (the Linux one is mani-linux.yaml)."

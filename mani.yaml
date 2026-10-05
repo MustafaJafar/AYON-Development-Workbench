@@ -828,3 +828,19 @@ tasks:
       export AYON_ADDON_NAME=kitsu
       export AYON_ADDON_VERSION=$(python -c 'content={}; exec(open("package.py").read(), content); print(content["version"])')
       cd services/processor && pwsh ./manage.ps1 run
+
+  # ---------------------------------------------------------------- Linux VM: make mani.yaml the Linux config
+  # On the VM, mani loads mani.yaml by default, which is this Windows config: its top-level `shell:` does not
+  # exist there, so every task prints only its header and nothing else. This task swaps the two files; it has its
+  # own `shell:` so it works on a fresh clone. Undo it with `mani run to-win` (defined in mani-linux.yaml).
+  to-linux:
+    desc: "LINUX VM ONLY. mani.yaml -> mani-win.yaml and mani-linux.yaml -> mani.yaml. Undo: mani run to-win"
+    shell: bash -c
+    target:
+      projects: [workbench]
+    cmd: |
+      [ -f mani-linux.yaml ] || { echo "mani-linux.yaml not found, nothing to do"; exit 1; }
+      [ ! -e mani-win.yaml ] || { echo "mani-win.yaml already exists, already swapped?"; exit 1; }
+      mv mani.yaml mani-win.yaml
+      mv mani-linux.yaml mani.yaml
+      echo "Done: mani.yaml is now the Linux config (the Windows one is mani-win.yaml)."
