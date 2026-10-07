@@ -31,14 +31,15 @@ Here's a quick peek at what this repository offers, but you'll probably want to 
 > ```
 > `mani run addon-upload` / `addons-upload-all` then run the script with `uv run`, which also creates the environment on first use.
 
-## Claude Code / mani
-Commands now live in [`mani.yaml`](mani.yaml) (install [mani](https://github.com/alajmo/mani)), which is the single source of truth:
-- `mani sync` clones every repo listed there (`mani sync -p ayon-core` for one); `mani list projects` shows them with tags.
-- `mani describe tasks` lists the tasks: git helpers (`status`, `update-default`, `add-remote`, ...), addon packaging/upload, launcher, dependency packages, addon services, docker server and docs.
-- `mani-linux.yaml` has just the server tasks for the Linux VM, under the same names (see [Linux VM](#linux-vm)).
-- `.vscode/tasks.json` just wraps those tasks for the VS Code UI (so the commands are the same whether you click or type).
-- [`CLAUDE.md`](CLAUDE.md) tells Claude Code about the layout and which command to use for what.
+## How the commands are organised
+There are two kinds of commands. Both show up in the VS Code task picker (Terminal > Run Task).
 
+- **mani tasks** ([`mani.yaml`](mani.yaml), install [mani](https://github.com/alajmo/mani)): commands that finish by themselves, need no keyboard input, or work across many repos. For example the git helpers (`status`, `update-default`, `update-branch`, ...), addon packaging and upload, dependency packages, docker server updates and the docs install. Run them in a terminal (`mani run <task>`), let Claude run them, or click the matching VS Code task: most of them have a thin wrapper in `.vscode/tasks.json` that just calls mani. `mani describe tasks` lists them, `mani list projects` shows the repos with their tags, and `mani sync -p ayon-core` clones one repo.
+- **VS Code-only tasks** (`.vscode/tasks.json`, no mani task behind them): commands that run until you close them or need a real terminal. They run directly in the VS Code terminal, so you keep colours, prompts and Ctrl-C. These are the launcher (dev, staging, production), the ShotGrid and ftrack services, the live server log, the frontend dev server, Jupyter, the ngrok tunnel, docker prune and project backup/restore.
+
+Why the split: mani runs a task without a terminal. Its output is plain and prefixed with the repo name, a command cannot ask y/N, and mani's `tty: true` does nothing on Windows. On the other hand, a task with several steps is much simpler in mani (the Kitsu processor reads its version from `package.py`, so it stays there although it runs until stopped).
+
+Rule of thumb for a new command: it finishes by itself, needs no input, has several steps or touches several repos: a mani task (plus a wrapper if you want a button). A single command that runs until you stop it, or needs input: a VS Code task. [`CLAUDE.md`](CLAUDE.md) tells Claude Code the same: it runs the mani tasks and does not start the VS Code-only ones.
 
 ## Folder layout
 - root: Ynput repos only, one folder per repo.
@@ -48,17 +49,7 @@ Commands now live in [`mani.yaml`](mani.yaml) (install [mani](https://github.com
 - `tests/`: test scripts and test data.
 
 ## Linux VM
-On the VM the server tasks live in `mani-linux.yaml`. mani loads `mani.yaml` by default, which is the Windows config
-(its `shell:` does not exist on Linux, so tasks would print only their header and nothing else). Pick one:
-
-- Pass the file each time: `mani -c mani-linux.yaml run <task>`, or alias it in `~/.bashrc`:
-  `alias mani='mani -c ~/AYON/mani-linux.yaml'` (interactive terminals only, not VS Code tasks).
-  `MANI_CONFIG` does **not** work: mani ignores it when a `mani.yaml` is in the current folder or a parent.
-- Or make the Linux config the default by swapping the files, which also covers VS Code tasks:
-  ```
-  mani run to-linux      # mani.yaml -> mani-win.yaml, mani-linux.yaml -> mani.yaml
-  mani run to-win        # undo it
-  ```
-  Undo it before pulling, then swap again: `mani run to-win && git pull && mani run to-linux`.
-  By hand that is `mv mani.yaml mani-win.yaml` and `mv mani-linux.yaml mani.yaml` (and the reverse).
-  Git will show the swapped files as changed: do not commit them from the VM.
+The VM clones this same workbench. The only difference there is the shell mani runs tasks with:
+- In `mani.yaml`, change the first `shell:` line to `shell: bash -c`. It's a local edit: never commit it from the VM.
+- Update with `git pull --autostash`, which sets that edit aside and puts it back (a plain `git pull` refuses when the incoming change touches `mani.yaml`).
+- The Windows-only tasks (launcher, services, ...) also show up on the VM; just ignore them.

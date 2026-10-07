@@ -1,5 +1,7 @@
 {
-    // Thin wrappers over mani tasks (see mani.yaml), the single source of truth, also used by Claude via CLAUDE.md.
+    // Two kinds of tasks. Most call a mani task (see mani.yaml), which is also what Claude runs via CLAUDE.md.
+    // The others (launcher, services, live logs, ...) run directly in the VS Code terminal because they run until
+    // you stop them or need a real terminal; they have no mani task.
     "version": "2.0.0",
     "options": {
         "cwd": "${workspaceFolder}"
@@ -48,6 +50,12 @@
             "problemMatcher": []
         },
         {
+            "label": "Update a repo to a fork's branch",
+            "type": "shell",
+            "command": "mani run update-branch-remote -p ${input:repo_name} BRANCH=${input:fork_branch}",
+            "problemMatcher": []
+        },
+        {
             "label": "Update Repo Submodules",
             "type": "shell",
             "command": "mani run submodules -p ${input:repo_name}",
@@ -86,7 +94,7 @@
         {
             "label": "Launch Jupyter",
             "type": "shell",
-            "command": "mani run jupyter",
+            "command": "jupyter notebook --notebook-dir tmp",
             "problemMatcher": []
         },
         {
@@ -131,10 +139,12 @@
             "command": "mani run server-log DOCKER_REPO=${input:docker_repo} SERVICE=${input:docker_service}",
             "problemMatcher": []
         },
+        // Long-running: runs directly in the VS Code terminal (colours, Ctrl-C), not through mani.
         {
             "label": "Show Live AYON Server Log",
             "type": "shell",
-            "command": "mani run server-log-live DOCKER_REPO=${input:docker_repo} SERVICE=${input:docker_service}",
+            "command": "docker compose logs -f -t -n 10 ${input:docker_service}",
+            "options": { "cwd": "${workspaceFolder}/${input:docker_repo}" },
             "problemMatcher": []
         },
         {
@@ -146,25 +156,30 @@
         {
             "label": "Prune Docker",
             "type": "shell",
-            "command": "mani run server-prune",
+            "command": "docker image prune -a",
             "problemMatcher": []
         },
+        // I always have the frontend repo cloned in `<docker repo>/server`. Assumes you are already on the correct branch.
         {
             "label": "Run Live Frontend",
             "type": "shell",
-            "command": "mani run frontend-live DOCKER_REPO=${input:docker_repo}",
+            "command": "yarn install && yarn dev --host 0.0.0.0",
+            "options": { "cwd": "${workspaceFolder}/${input:docker_repo}/server/ayon-frontend" },
             "problemMatcher": []
         },
+        // `make` runs fine on Windows and on the Linux VM (no sudo needed). Rarely used, so no mani task for them.
         {
             "label": "Backup a Project",
             "type": "shell",
-            "command": "mani run project-backup DOCKER_REPO=${input:docker_repo} PROJECT=${input:project_name}",
+            "command": "make dump projectname=${input:project_name}",
+            "options": { "cwd": "${workspaceFolder}/${input:docker_repo}" },
             "problemMatcher": []
         },
         {
             "label": "Import a Project",
             "type": "shell",
-            "command": "mani run project-restore DOCKER_REPO=${input:docker_repo} PROJECT=${input:project_name}",
+            "command": "make restore projectname=${input:project_name}",
+            "options": { "cwd": "${workspaceFolder}/${input:docker_repo}" },
             "problemMatcher": []
         },
         {
@@ -188,7 +203,7 @@
         {
             "label": "Make Docs Online",
             "type": "shell",
-            "command": "mani run docs-online",
+            "command": "ngrok http 3000",
             "problemMatcher": []
         },
         {
@@ -203,34 +218,40 @@
             "command": "mani run launcher-build-upload SSL_CERT=\"${input:ssl_cert}\"",
             "problemMatcher": []
         },
+        // Launcher (from code) and other single commands that run until you close them: direct VS Code tasks, so you get a real
+        // terminal (colours, input). For a custom CA bundle add SSL_CERT_FILE and REQUESTS_CA_BUNDLE to a task's "options.env".
         {
             "label": "Run Live Launcher Production",
             "type": "shell",
-            "command": "mani run launcher-prod SSL_CERT=\"${input:ssl_cert}\"",
+            "command": "${workspaceFolder}/ayon-launcher/tools/ayon_console.bat",
             "problemMatcher": []
         },
         {
             "label": "Run Live Launcher Staging",
             "type": "shell",
-            "command": "mani run launcher-staging SSL_CERT=\"${input:ssl_cert}\"",
+            "command": "${workspaceFolder}/ayon-launcher/tools/ayon_console.bat",
+            "args": ["--use-staging"],
             "problemMatcher": []
         },
         {
             "label": "Run Live Launcher Dev",
             "type": "shell",
-            "command": "mani run launcher-dev SSL_CERT=\"${input:ssl_cert}\"",
+            "command": "${workspaceFolder}/ayon-launcher/tools/ayon_console.bat",
+            "args": ["--use-dev"],
             "problemMatcher": []
         },
         {
             "label": "Launch publish report viewer",
             "type": "shell",
-            "command": "mani run publish-report-viewer SSL_CERT=\"${input:ssl_cert}\"",
+            "command": "${workspaceFolder}/ayon-launcher/tools/ayon_console.bat",
+            "args": ["--use-dev", "publish-report-viewer"],
             "problemMatcher": []
         },
         {
             "label": "Launch Tray Publisher in Dev",
             "type": "shell",
-            "command": "mani run traypublisher-dev SSL_CERT=\"${input:ssl_cert}\"",
+            "command": "${workspaceFolder}/ayon-launcher/tools/ayon_console.bat",
+            "args": ["--use-dev", "addon", "traypublisher", "launch"],
             "problemMatcher": []
         },
         {
@@ -263,22 +284,35 @@
             "command": "mani run shotgrid-install",
             "problemMatcher": []
         },
+        // ShotGrid and ftrack services run from code. They run until you stop them, so they are direct VS Code tasks.
+        // (The Kitsu processor below calls mani instead, because it has to read its addon version from package.py.)
+        // For a custom CA bundle add SSL_CERT_FILE and REQUESTS_CA_BUNDLE to a task's "options.env".
         {
             "label": "Run Shotgrid Services",
             "type": "shell",
-            "command": "mani run shotgrid-services SSL_CERT=\"${input:ssl_cert}\"",
+            "command": "pwsh ./manage.ps1 services",
+            "options": {
+                "cwd": "${workspaceFolder}/ayon-shotgrid/service_tools",
+                "env": { "SHOTGUN_API_CACERTS": "${workspaceFolder}/ayon-shotgrid/service_tools/.venv/Lib/site-packages/shotgun_api3/lib/httplib2/cacerts.txt" }
+            },
             "problemMatcher": []
         },
         {
             "label": "Run Shotgrid Leecher Service",
             "type": "shell",
-            "command": "mani run shotgrid-leecher BUNDLE=${input:bundle_name} SSL_CERT=\"${input:ssl_cert}\"",
+            "command": "pwsh service_tools/manage.ps1 leecher --variant ${input:bundle_name}",
+            "options": {
+                "cwd": "${workspaceFolder}/ayon-shotgrid"
+            },
             "problemMatcher": []
         },
         {
             "label": "Run Shotgrid Processor Service",
             "type": "shell",
-            "command": "mani run shotgrid-processor BUNDLE=${input:bundle_name} SSL_CERT=\"${input:ssl_cert}\"",
+            "command": "pwsh service_tools/manage.ps1 processor --variant ${input:bundle_name}",
+            "options": {
+                "cwd": "${workspaceFolder}/ayon-shotgrid"
+            },
             "problemMatcher": []
         },
         {
@@ -290,19 +324,28 @@
         {
             "label": "Run ftrack Services",
             "type": "shell",
-            "command": "mani run ftrack-services BUNDLE=${input:bundle_name} SSL_CERT=\"${input:ssl_cert}\"",
+            "command": "pwsh service_tools/manage.ps1 services --variant ${input:bundle_name}",
+            "options": {
+                "cwd": "${workspaceFolder}/ayon-ftrack"
+            },
             "problemMatcher": []
         },
         {
             "label": "Run ftrack Leecher Service",
             "type": "shell",
-            "command": "mani run ftrack-leecher BUNDLE=${input:bundle_name} SSL_CERT=\"${input:ssl_cert}\"",
+            "command": "pwsh service_tools/manage.ps1 leecher --variant ${input:bundle_name}",
+            "options": {
+                "cwd": "${workspaceFolder}/ayon-ftrack"
+            },
             "problemMatcher": []
         },
         {
             "label": "Run ftrack Processor Service",
             "type": "shell",
-            "command": "mani run ftrack-processor BUNDLE=${input:bundle_name} SSL_CERT=\"${input:ssl_cert}\"",
+            "command": "pwsh service_tools/manage.ps1 processor --variant ${input:bundle_name}",
+            "options": {
+                "cwd": "${workspaceFolder}/ayon-ftrack"
+            },
             "problemMatcher": []
         },
         {
@@ -316,22 +359,15 @@
             "type": "shell",
             "command": "mani run kitsu-processor SSL_CERT=\"${input:ssl_cert}\"",
             "problemMatcher": []
-        },
-        // Linux VM only: make the Linux config the default mani.yaml, and undo it (run to-win before git pull).
-        {
-            "label": "Use Linux mani config (VM only)",
-            "type": "shell",
-            "command": "mani run to-linux",
-            "problemMatcher": []
-        },
-        {
-            "label": "Use Windows mani config again (VM only)",
-            "type": "shell",
-            "command": "mani run to-win",
-            "problemMatcher": []
         }
     ],
     "inputs": [
+        {
+            "id": "fork_branch",
+            "description": "<remote>:<branch>, as GitHub shows a PR from a fork (adds the remote if needed)",
+            "default": "",
+            "type": "promptString"
+        },
         {
             "id": "ssl_cert",
             "description": "Optional: path to a CA bundle for a local SSL ayon-docker (SSL_CERT_FILE / REQUESTS_CA_BUNDLE). Leave empty if not needed.",
@@ -346,7 +382,7 @@
         },
         {
             "id": "branch_name",
-            "description": "",
+            "description": "Branch name on origin",
             "default": "develop",
             "type": "promptString"
         },

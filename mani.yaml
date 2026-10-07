@@ -1,7 +1,7 @@
 # Workspace manifest. `mani sync` clones every project listed here.
 # Tags (set by hand; used to browse and relate repos, e.g. `mani list projects --tags houdini`).
 # A tag is only kept if it groups repos or is a filter, so a tag that just repeats a repo's own name is not used.
-#   kind      addon (an AYON addon) | utility (helper tool, plugin or library) | server (server component) | api |
+#   kind      addon (an AYON addon; addons-upload-all packages and uploads every one) | utility (helper tool, plugin or library) | server (server component) | api |
 #             app | example | test | ci | docs | reference (read it to learn from it)
 #   tier      essential (minimum for running an AYON server with a pipeline)
 #   category  3d | 2d-draw | 2d-comp: addons for 3D apps | drawing/painting apps | compositing, editorial and review apps
@@ -15,7 +15,8 @@
 # Tasks need Git Bash. mani's default shell on Windows is PowerShell, and a plain `bash` can resolve to WSL's.
 # Use Git's bin/bash.exe wrapper: it puts Git's coreutils (basename, dirname, cygpath, ...) on PATH, which
 # usr/bin/bash.exe does not when started from PowerShell/cmd, and it breaks the pyenv shims (ruff, ...).
-# 8.3 path because mani splits this string on spaces. The Linux VM uses mani-linux.yaml instead.
+# 8.3 path because mani splits this string on spaces. On the Linux VM change the line below to `shell: bash -c`
+# (a local edit that is never committed; update there with `git pull --autostash`).
 shell: C:/PROGRA~1/Git/bin/bash.exe -c
 
 # DOCKER_REPO: the docker repo the server-* tasks work on (ayon-docker unless overridden).
@@ -24,6 +25,10 @@ shell: C:/PROGRA~1/Git/bin/bash.exe -c
 env:
   SSL_CERT: ""
   DOCKER_REPO: ayon-docker
+  # Tasks run without a tty (mani captures their output). Then Python buffers stdout, so logs show up late, and on
+  # Windows it falls back to cp1252 and crashes on characters like a check mark. These two fix both.
+  PYTHONUNBUFFERED: "1"
+  PYTHONIOENCODING: utf-8
 
 # Repos that are not cloned are skipped instead of failing the run.
 specs:
@@ -417,10 +422,26 @@ tasks:
       git checkout "$branch" && git pull origin "$branch"
 
   update-branch:
-    desc: "Checkout + pull a branch. Usage: mani run update-branch -p <repo> BRANCH=develop"
+    desc: "Fetch, checkout and pull a branch from origin (also one pushed after your last fetch, like a new PR branch). Usage: mani run update-branch -p <repo> BRANCH=develop"
     env:
       BRANCH: develop
-    cmd: git checkout "$BRANCH" && git pull origin "$BRANCH"
+    cmd: git fetch origin "$BRANCH" && git checkout "$BRANCH" && git pull origin "$BRANCH"
+
+  update-branch-remote:
+    desc: "A PR branch from a fork, as GitHub shows it: adds the remote if missing and checks out a local branch named <remote>/<branch>. Usage: mani run update-branch-remote -p <repo> BRANCH=<remote>:<branch>"
+    env:
+      BRANCH: ""
+    cmd: |
+      [[ "$BRANCH" == *:* ]] || { echo "BRANCH must be <remote>:<branch>"; exit 1; }
+      remote="${BRANCH%%:*}"
+      branch="${BRANCH#*:}"
+      git remote get-url "$remote" >/dev/null 2>&1 || git remote add "$remote" "https://github.com/$remote/$(basename "$PWD").git"
+      git fetch "$remote" "$branch" || exit 1
+      if git show-ref --verify --quiet "refs/heads/$remote/$branch"; then
+        git checkout "$remote/$branch" && git pull "$remote" "$branch"
+      else
+        git checkout -b "$remote/$branch" --track "$remote/$branch"
+      fi
 
   submodules:
     desc: Init/update submodules (mani sync does not use --recurse-submodules)
@@ -465,15 +486,6 @@ tasks:
       FILE: ""
     cmd: ruff check --fix $FILE
 
-  jupyter:
-    desc: Launch Jupyter notebook in tmp/jupyter
-    target:
-      projects: [workbench]
-    tty: true
-    cmd: |
-      mkdir -p tmp/jupyter
-      cd tmp/jupyter && jupyter notebook
-
   # ---------------------------------------------------------------- Addons: zip + upload to my server
   # Needs scripts/.env (AYON_SERVER_URL, AYON_API_KEY) and uv (`uv run` creates the venv in scripts on first use)
   # (see scripts/setup-my-dev-env.ps1).
@@ -490,13 +502,13 @@ tasks:
       cd ../scripts && uv run python upload-addon.py --addon "$addon"
 
   addons-upload-all:
-    desc: Clear tmp/packages, package my usual addons (the `-p` list below), upload them all
+    desc: Clear tmp/packages, package EVERY addon (all repos tagged `addon`), upload them all
     target:
       projects: [workbench]
     cmd: |
       . scripts/local-ssl.sh
       rm -rf tmp/packages && mkdir -p tmp/packages
-      mani run addon-package -p ayon-third-party,ayon-ocio,ayon-applications,ayon-core,ayon-traypublisher,ayon-blender,ayon-deadline,ayon-houdini,ayon-maya,ayon-nuke,ayon-usd
+      mani run addon-package --tags addon
       pkg="$(pwd -W 2>/dev/null || pwd)/tmp/packages"
       cd scripts && uv run python upload-addon.py --package-dir "$pkg"
 
@@ -548,17 +560,6 @@ tasks:
       cd "$DOCKER_REPO"
       docker compose logs -t -n 1000 "$SERVICE" > "../tmp/${DOCKER_REPO}_$SERVICE.log" 2>&1
 
-  server-log-live:
-    desc: "Follow the log of $SERVICE (default server) in $DOCKER_REPO (default ayon-docker). Usage: mani run server-log-live [DOCKER_REPO=<repo>] [SERVICE=<service>]"
-    env:
-      SERVICE: server
-    target:
-      projects: [workbench]
-    tty: true
-    cmd: |
-      cd "$DOCKER_REPO"
-      docker compose logs -f -t -n 10 "$SERVICE"
-
   server-release:
     desc: "Print the RELEASE file of the server running from $DOCKER_REPO (default ayon-docker). Usage: mani run server-release [DOCKER_REPO=<repo>]"
     target:
@@ -566,42 +567,6 @@ tasks:
     cmd: |
       cd "$DOCKER_REPO"
       docker compose exec server cat RELEASE
-
-  server-prune:
-    desc: "DESTRUCTIVE. docker image prune -a (removes all unused images, asks for confirmation)"
-    target:
-      projects: [workbench]
-    tty: true
-    cmd: docker image prune -a
-
-  frontend-live:
-    desc: "Run the frontend dev server from $DOCKER_REPO/server/ayon-frontend (default ayon-docker; clone it there and check out the right branch first). Usage: mani run frontend-live [DOCKER_REPO=<repo>]"
-    target:
-      projects: [workbench]
-    tty: true
-    cmd: |
-      cd "$DOCKER_REPO/server/ayon-frontend"
-      yarn install && yarn dev --host 0.0.0.0
-
-  project-backup:
-    desc: "Dump project $PROJECT to SQL with sudo make in $DOCKER_REPO (default ayon-docker). Usage: mani run project-backup PROJECT=<name> [DOCKER_REPO=<repo>]"
-    env:
-      PROJECT: demo_Commercial
-    target:
-      projects: [workbench]
-    cmd: |
-      cd "$DOCKER_REPO"
-      sudo make dump projectname="$PROJECT"
-
-  project-restore:
-    desc: "Restore project $PROJECT from dump.$PROJECT.sql with sudo make in $DOCKER_REPO (default ayon-docker). Usage: mani run project-restore PROJECT=<name> [DOCKER_REPO=<repo>]"
-    env:
-      PROJECT: demo_Commercial
-    target:
-      projects: [workbench]
-    cmd: |
-      cd "$DOCKER_REPO"
-      sudo make restore projectname="$PROJECT" "dump.$PROJECT.sql"
 
   kitsu-update:
     desc: Pull + rebuild my local Kitsu server (extras/Kitsu-for-Docker)
@@ -628,13 +593,6 @@ tasks:
       rm -rf .docusaurus
       yarn start
 
-  docs-online:
-    desc: Expose localhost:3000 temporarily via ngrok
-    target:
-      projects: [workbench]
-    tty: true
-    cmd: ngrok http 3000
-
   # ---------------------------------------------------------------- Launcher
   launcher-env:
     desc: Create the launcher venv and install runtime dependencies
@@ -655,51 +613,6 @@ tasks:
       done < <(tr -d '\r' < ../scripts/.env)
       pwsh -NoProfile -Command 'tools/manage.ps1 --build-make-installer --force' &&
       pwsh -NoProfile -Command 'tools/manage.ps1 upload --server $env:AYON_SERVER_URL --api-key $env:AYON_API_KEY --force'
-
-  launcher-prod:
-    desc: Run the launcher from code, production bundle
-    target:
-      projects: [ayon-launcher]
-    tty: true
-    cmd: |
-      . ../scripts/local-ssl.sh
-      pwsh -NoProfile -Command "tools/ayon_console.bat"
-
-  launcher-staging:
-    desc: Run the launcher from code, staging bundle
-    target:
-      projects: [ayon-launcher]
-    tty: true
-    cmd: |
-      . ../scripts/local-ssl.sh
-      pwsh -NoProfile -Command "tools/ayon_console.bat --use-staging"
-
-  launcher-dev:
-    desc: Run the launcher from code, dev bundle
-    target:
-      projects: [ayon-launcher]
-    tty: true
-    cmd: |
-      . ../scripts/local-ssl.sh
-      pwsh -NoProfile -Command "tools/ayon_console.bat --use-dev"
-
-  publish-report-viewer:
-    desc: Launch the publish report viewer (dev bundle)
-    target:
-      projects: [ayon-launcher]
-    tty: true
-    cmd: |
-      . ../scripts/local-ssl.sh
-      pwsh -NoProfile -Command "tools/ayon_console.bat --use-dev publish-report-viewer"
-
-  traypublisher-dev:
-    desc: Launch Tray Publisher (dev bundle)
-    target:
-      projects: [ayon-launcher]
-    tty: true
-    cmd: |
-      . ../scripts/local-ssl.sh
-      pwsh -NoProfile -Command "tools/ayon_console.bat --use-dev addon traypublisher launch"
 
   # ---------------------------------------------------------------- Addon env / dependency packages
   core-env:
@@ -738,8 +651,9 @@ tasks:
       . ../scripts/local-ssl.sh
       pwsh start.ps1 create -b "$BUNDLE" --output-dir "$OUTPUT_DIR"
 
-  # ---------------------------------------------------------------- Addon services (run from code)
-  # BUNDLE is the bundle variant the service connects as. The *-install tasks copy scripts/.env in.
+  # ---------------------------------------------------------------- Addon services: install
+  # The *-install tasks copy scripts/.env in. The ShotGrid and ftrack services are VS Code tasks (they run until stopped);
+  # only the Kitsu processor is here, because it has to read its addon version from package.py.
   shotgrid-install:
     desc: Install ShotGrid service tools (copies scripts/.env first)
     target:
@@ -748,38 +662,6 @@ tasks:
       cp ../scripts/.env service_tools/.env
       pwsh service_tools/manage.ps1 create-env
 
-  shotgrid-services:
-    desc: Run all ShotGrid services (uses extras/cacert.pem as SHOTGUN_API_CACERTS)
-    target:
-      projects: [ayon-shotgrid]
-    tty: true
-    cmd: |
-      . ../scripts/local-ssl.sh
-      export SHOTGUN_API_CACERTS="$(cd ../extras && pwd -W)/cacert.pem"
-      cd service_tools && pwsh ./manage.ps1 services
-
-  shotgrid-leecher:
-    desc: "Run the ShotGrid leecher. Usage: mani run shotgrid-leecher BUNDLE=AYON-Dev"
-    env:
-      BUNDLE: AYON-Dev
-    target:
-      projects: [ayon-shotgrid]
-    tty: true
-    cmd: |
-      . ../scripts/local-ssl.sh
-      pwsh service_tools/manage.ps1 leecher --variant "$BUNDLE"
-
-  shotgrid-processor:
-    desc: "Run the ShotGrid processor. Usage: mani run shotgrid-processor BUNDLE=AYON-Dev"
-    env:
-      BUNDLE: AYON-Dev
-    target:
-      projects: [ayon-shotgrid]
-    tty: true
-    cmd: |
-      . ../scripts/local-ssl.sh
-      pwsh service_tools/manage.ps1 processor --variant "$BUNDLE"
-
   ftrack-install:
     desc: Install ftrack service tools (copies scripts/.env first)
     target:
@@ -787,39 +669,6 @@ tasks:
     cmd: |
       cp ../scripts/.env service_tools/.env
       pwsh service_tools/manage.ps1 install
-
-  ftrack-services:
-    desc: "Run all ftrack services. Usage: mani run ftrack-services BUNDLE=AYON-Dev"
-    env:
-      BUNDLE: AYON-Dev
-    target:
-      projects: [ayon-ftrack]
-    tty: true
-    cmd: |
-      . ../scripts/local-ssl.sh
-      pwsh service_tools/manage.ps1 services --variant "$BUNDLE"
-
-  ftrack-leecher:
-    desc: "Run the ftrack leecher. Usage: mani run ftrack-leecher BUNDLE=AYON-Dev"
-    env:
-      BUNDLE: AYON-Dev
-    target:
-      projects: [ayon-ftrack]
-    tty: true
-    cmd: |
-      . ../scripts/local-ssl.sh
-      pwsh service_tools/manage.ps1 leecher --variant "$BUNDLE"
-
-  ftrack-processor:
-    desc: "Run the ftrack processor. Usage: mani run ftrack-processor BUNDLE=AYON-Dev"
-    env:
-      BUNDLE: AYON-Dev
-    target:
-      projects: [ayon-ftrack]
-    tty: true
-    cmd: |
-      . ../scripts/local-ssl.sh
-      pwsh service_tools/manage.ps1 processor --variant "$BUNDLE"
 
   kitsu-processor-install:
     desc: Install the Kitsu processor service (still poetry, its manage.ps1 requires it; copies scripts/.env first)
@@ -830,10 +679,9 @@ tasks:
       cd services/processor && poetry install --no-root
 
   kitsu-processor:
-    desc: Run the Kitsu processor service from code
+    desc: Run the Kitsu processor service from code. It needs the addon version, which is read from package.py.
     target:
       projects: [ayon-kitsu]
-    tty: true
     cmd: |
       . ../scripts/local-ssl.sh
       # ayon_api.init_service() expects these two to resolve the service context.
@@ -841,18 +689,3 @@ tasks:
       export AYON_ADDON_VERSION=$(python -c 'content={}; exec(open("package.py").read(), content); print(content["version"])')
       cd services/processor && pwsh ./manage.ps1 run
 
-  # ---------------------------------------------------------------- Linux VM: make mani.yaml the Linux config
-  # On the VM, mani loads mani.yaml by default, which is this Windows config: its top-level `shell:` does not
-  # exist there, so every task prints only its header and nothing else. This task swaps the two files; it has its
-  # own `shell:` so it works on a fresh clone. Undo it with `mani run to-win` (defined in mani-linux.yaml).
-  to-linux:
-    desc: "LINUX VM ONLY. mani.yaml -> mani-win.yaml and mani-linux.yaml -> mani.yaml. Undo: mani run to-win"
-    shell: bash -c
-    target:
-      projects: [workbench]
-    cmd: |
-      [ -f mani-linux.yaml ] || { echo "mani-linux.yaml not found, nothing to do"; exit 1; }
-      [ ! -e mani-win.yaml ] || { echo "mani-win.yaml already exists, already swapped?"; exit 1; }
-      mv mani.yaml mani-win.yaml
-      mv mani-linux.yaml mani.yaml
-      echo "Done: mani.yaml is now the Linux config (the Windows one is mani-win.yaml)."
