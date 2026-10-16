@@ -587,11 +587,18 @@ tasks:
     desc: Serve ayon-documentation locally on :3000 (clears the .docusaurus cache first)
     target:
       projects: [ayon-documentation]
-    tty: true
     cmd: |
       cd website
       rm -rf .docusaurus
       yarn start
+
+  docs-serve:
+    desc: Build ayon-documentation and serve the build on :3000 (the production build, unlike docs-run). Runs until stopped.
+    target:
+      projects: [ayon-documentation]
+    cmd: |
+      cd website
+      yarn build && yarn serve --port 3000
 
   # ---------------------------------------------------------------- Launcher
   launcher-env:

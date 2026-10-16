@@ -164,7 +164,7 @@
             "label": "Run Live Frontend",
             "type": "shell",
             "command": "yarn install && yarn dev --host 0.0.0.0",
-            "options": { "cwd": "${workspaceFolder}/${input:docker_repo}/server/ayon-frontend" },
+            "options": { "cwd": "${workspaceFolder}/ayon-frontend" },
             "problemMatcher": []
         },
         // `make` runs fine on Windows and on the Linux VM (no sudo needed). Rarely used, so no mani task for them.
@@ -198,6 +198,12 @@
             "label": "Run Docs",
             "type": "shell",
             "command": "mani run docs-run",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build and Serve Docs",
+            "type": "shell",
+            "command": "mani run docs-serve",
             "problemMatcher": []
         },
         {

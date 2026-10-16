@@ -46,7 +46,7 @@ Tags are set by hand (full legend in the header of `mani.yaml`): a kind (`addon`
 | `mani run docker-clone [DOCKER_REPO=<repo>]` | `git clone https://github.com/ynput/$DOCKER_REPO.git` (default `ayon-docker`; skipped if the folder exists). A task, not a mani project, because mani can't expand env vars in a project url |
 | `mani run server-update\|restart\|rebuild\|log\|release [DOCKER_REPO=<repo>]` | Docker compose operations for the deployed server. `DOCKER_REPO` is the docker repo folder (default `ayon-docker`); `log` takes `SERVICE=<compose service>` (default `server`) |
 | `mani run kitsu-update` | Pull + rebuild the local Kitsu server |
-| `mani run docs-init\|docs-run` | ayon-documentation Docusaurus site (install / serve) |
+| `mani run docs-init\|docs-run\|docs-serve` | ayon-documentation Docusaurus site: install / dev server / build and serve the build on :3000 (both servers run until stopped) |
 
 ## VS Code-only tasks (started by me, not by Claude)
 
@@ -62,7 +62,7 @@ These have no mani task: they run until closed or need a real terminal (colours,
 | Prune Docker | `docker image prune -a` (asks y/N) |
 | Launch Jupyter, Make Docs Online | `jupyter notebook --notebook-dir tmp`, `ngrok http 3000` |
 
-The Kitsu processor is the exception: it runs until stopped but is a mani task (`kitsu-processor`), because it has to read its addon version from `package.py`.
+Exceptions: the Kitsu processor (`kitsu-processor`, it has to read its addon version from `package.py`) and the docs servers (`docs-run`, `docs-serve`, several steps each) run until stopped but are mani tasks, because several steps are simpler in mani.
 
 ## Conventions
 - Default branches differ per repo (`develop` for most addons, `main` for `ayon-docker`, `ayon-pipeline-tests`, ...). Never assume `main`; read `origin/HEAD` (what `update-default` does).
