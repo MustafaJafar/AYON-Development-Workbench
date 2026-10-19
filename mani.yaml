@@ -7,7 +7,7 @@
 #   category  3d | 2d-draw | 2d-comp: addons for 3D apps | drawing/painting apps | compositing, editorial and review apps
 #   topic     what repos relate to: an app or service (houdini = ayon-houdini + HuskStandaloneSubmitter +
 #             houdini_PRTROP; kitsu = ayon-kitsu + Kitsu-for-Docker; also nuke, unreal, usd, deadline), a function
-#             (prod-track: production trackers; farm-manager; media-player; pipeline), docker, frontend
+#             (project-management: planning, tracking and the data feeding them, with prod-track for the production trackers; farm-manager; media-player; pipeline), docker, frontend
 #   optional  kept for reference only: `sync: false`, so `mani sync` and default tasks skip it;
 #             clone with `mani sync -p <repo> --ignore-sync-state`, run tasks on it with `-p <repo>`
 # Tasks are further down; see `mani describe tasks`.
@@ -63,7 +63,7 @@ projects:
     desc: "Airtable integration addon"
     url: https://github.com/ynput/ayon-airtable.git
     path: ayon-airtable
-    tags: [addon, prod-track]
+    tags: [addon, project-management, prod-track]
   ayon-applications:
     desc: "Applications (DCC launch definitions) addon"
     url: https://github.com/ynput/ayon-applications.git
@@ -103,6 +103,11 @@ projects:
     desc: "Deadline render farm addon"
     url: https://github.com/ynput/ayon-deadline.git
     path: ayon-deadline
+    tags: [addon, deadline, farm-manager]
+  ayon-deadline-cloud:
+    desc: "AWS Deadline Cloud integration addon"
+    url: https://github.com/ynput/ayon-deadline-cloud.git
+    path: ayon-deadline-cloud
     tags: [addon, deadline, farm-manager]
   ayon-dependencies-tool:
     desc: "Tool to create/upload AYON dependency packages"
@@ -148,7 +153,7 @@ projects:
     desc: "ftrack integration addon (+ services)"
     url: https://github.com/ynput/ayon-ftrack.git
     path: ayon-ftrack
-    tags: [addon, prod-track]
+    tags: [addon, project-management, prod-track]
   ayon-fusion:
     desc: "Fusion integration addon"
     url: https://github.com/ynput/ayon-fusion.git
@@ -159,6 +164,11 @@ projects:
     url: https://github.com/ynput/ayon-harmony.git
     path: ayon-harmony
     tags: [addon, 2d-draw]
+  ayon-hibob:
+    desc: "HiBob integration addon"
+    url: https://github.com/ynput/ayon-hibob.git
+    path: ayon-hibob
+    tags: [addon, project-management]
   ayon-hiero:
     desc: "Hiero integration addon"
     url: https://github.com/ynput/ayon-hiero.git
@@ -173,7 +183,7 @@ projects:
     desc: "Kitsu integration addon (+ services)"
     url: https://github.com/ynput/ayon-kitsu.git
     path: ayon-kitsu
-    tags: [addon, prod-track, kitsu]
+    tags: [addon, project-management, prod-track, kitsu]
   ayon-launcher:
     desc: "AYON Launcher (desktop app, installer)"
     url: https://github.com/ynput/ayon-launcher.git
@@ -273,7 +283,7 @@ projects:
     desc: "ShotGrid integration addon (+ services)"
     url: https://github.com/ynput/ayon-shotgrid.git
     path: ayon-shotgrid
-    tags: [addon, prod-track]
+    tags: [addon, project-management, prod-track]
   ayon-silhouette:
     desc: "Silhouette integration addon"
     url: https://github.com/ynput/ayon-silhouette.git
