@@ -379,6 +379,11 @@ projects:
     url: https://github.com/ynput/ayon-zbrush.git
     path: ayon-zbrush
     tags: [addon, 3d]
+  gh-sticky:
+    desc: "Always-on-top window of hand-picked GitHub PRs and issues (my tool)"
+    url: https://github.com/MustafaJafar/gh-sticky.git
+    path: extras/gh-sticky
+    tags: [utility]
   houdini_PRTROP:
     desc: "Houdini PRTROP package (flipswitchingmonkey)"
     url: https://github.com/flipswitchingmonkey/houdini_PRTROP.git

@@ -61,6 +61,7 @@ These have no mani task: they run until closed or need a real terminal (colours,
 | Backup a Project, Import a Project | `make dump` / `make restore projectname=<project>` in the docker repo |
 | Prune Docker | `docker image prune -a` (asks y/N) |
 | Launch Jupyter, Make Docs Online | `jupyter notebook --notebook-dir tmp`, `ngrok http 3000` |
+| Launch GitHub Sticky | `pythonw extras/gh-sticky/gh-sticky.pyw` (repo `gh-sticky`, my own tool): always-on-top window of hand-picked PRs/issues grouped in panels (read with `gh`; state in `%APPDATA%/gh-sticky/state.json`, or `--state <path>`) |
 
 Exceptions: the Kitsu processor (`kitsu-processor`, it has to read its addon version from `package.py`) and the docs servers (`docs-run`, `docs-serve`, several steps each) run until stopped but are mani tasks, because several steps are simpler in mani.
 

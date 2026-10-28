@@ -98,6 +98,12 @@
             "problemMatcher": []
         },
         {
+            "label": "Launch GitHub Sticky",
+            "type": "shell",
+            "command": "pythonw extras/gh-sticky/gh-sticky.pyw",
+            "problemMatcher": []
+        },
+        {
             "label": "Create and upload an addon",
             "type": "shell",
             "command": "mani run addon-upload -p ${input:repo_name} SSL_CERT=\"${input:ssl_cert}\"",
